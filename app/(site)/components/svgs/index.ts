@@ -1,0 +1,18 @@
+/**
+ * SVG Icons - Herbruikbare icoon componenten
+ *
+ * Alle iconen accepteren een className prop voor Tailwind styling.
+ * Iconen gebruiken stroke-based SVG voor consistente lijndikte.
+ *
+ * Beschikbare iconen:
+ * - ArrowRightIcon: Pijl naar rechts (voor CTA buttons)
+ * - BuildingIcon: Gebouw/kantoor (voor locaties/bedrijven)
+ * - ExternalLinkIcon: Externe link pijl (voor outbound links)
+ * - MenuIcon: Hamburger menu (voor mobiele navigatie)
+ * - CloseIcon: Sluit/kruis icoon (voor sluiten van menus)
+ */
+export { default as ArrowRightIcon } from "./ArrowRightIcon";
+export { default as BuildingIcon } from "./BuildingIcon";
+export { default as ExternalLinkIcon } from "./ExternalLinkIcon";
+export { default as MenuIcon } from "./MenuIcon";
+export { default as CloseIcon } from "./CloseIcon";
