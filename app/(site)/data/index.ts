@@ -11,3 +11,4 @@
 export * from "./hero";
 export * from "./metadata";
 export * from "./navbar";
+export * from "./about";

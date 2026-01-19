@@ -1,12 +1,12 @@
-import { Tag } from "@/sanity/types";
+import { AllTagsQueryResult } from "@/sanity/types";
 import Link from "next/link";
 
-interface FilteringProps {
-  tags: Tag[];
+interface TagFilterProps {
+  tags: AllTagsQueryResult;
   activeTag?: string | null;
 }
 
-const Filtering = ({ tags, activeTag }: FilteringProps) => {
+const TagFilter = ({ tags, activeTag }: TagFilterProps) => {
   return (
     <div className="p-4 rounded-xl bg-white/10 backdrop-blur-sm mb-6">
       <h2 className="text-xl font-semibold mb-4 text-white">Filter by Tags</h2>
@@ -39,4 +39,4 @@ const Filtering = ({ tags, activeTag }: FilteringProps) => {
   );
 };
 
-export default Filtering;
+export default TagFilter;

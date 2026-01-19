@@ -1,111 +1,59 @@
-import { sanityFetch } from "@/sanity/lib/live";
-import { postBySlugQuery } from "@/sanity/lib/queries";
-import { urlFor } from "@/sanity/lib/image";
-import Image from "next/image";
+import { getPostBySlug } from "@/lib/sanity";
 import { notFound } from "next/navigation";
-import markdownit from "markdown-it";
-import hljs from "highlight.js";
-import "highlight.js/styles/github-dark.css";
 import Link from "next/link";
-import { formatTime } from "@/utils/time_converter";
+import { renderMarkdown } from "@/lib/utils/markdown";
+import { PostHeader, AuthorInfo, TagList } from "@/app/(site)/components/blog";
+import Section from "@/app/(site)/components/ui/Section";
+import { ArrowLeftIcon } from "@/app/(site)/components/svgs";
+import type { PageProps } from "@/types";
+import "highlight.js/styles/github-dark.css";
 
-// Configure markdown-it with syntax highlighting
-const md = markdownit({
-  html: true,
-  linkify: true,
-  typographer: true,
-  highlight: function (str: string, lang: string): string {
-    if (lang && hljs.getLanguage(lang)) {
-      try {
-        return `<pre class="hljs"><code class="language-${lang}">${hljs.highlight(str, { language: lang }).value}</code></pre>`;
-      } catch (error) {
-        console.error("Highlight.js error:", error);
-      }
-    }
-    return `<pre class="hljs"><code>${md.utils.escapeHtml(str)}</code></pre>`;
-  },
-});
-
-interface PageProps {
-  params: Promise<{
-    slug: string;
-  }>;
-}
-
-const page = async ({ params }: PageProps) => {
+export default async function BlogPostPage({ params }: PageProps) {
   const resolvedParams = await params;
-  const slug = resolvedParams.slug;
+  const slug = resolvedParams?.slug;
 
-  const { data: post } = await sanityFetch({
-    query: postBySlugQuery,
-    params: { slug },
-  });
+  if (!slug) {
+    notFound();
+  }
+
+  const post = await getPostBySlug(slug);
 
   if (!post) {
     notFound();
   }
 
-  const markdownContent = md.render(post.body || "");
-  console.log("Rendered PublishedAt:", post.published_at);
+  const htmlContent = renderMarkdown(post.body || "");
 
   return (
     <div className="bg-background relative min-h-screen pt-24 overflow-x-hidden">
       <article className="max-w-3xl mx-auto p-4">
-        {post.featured_image && (
-          <Image
-            src={urlFor(post.featured_image).width(1200).height(600).url()}
-            alt={post.title ?? "Post image"}
-            width={1200}
-            height={600}
-            className="w-full h-64 md:h-96 object-cover rounded-xl mb-8"
+        <Link
+          href="/blog"
+          className="inline-flex items-center gap-2 mb-6 text-sm text-gray-400 hover:text-white transition-colors"
+        >
+          <ArrowLeftIcon className="h-4 w-4" />
+          Terug naar blogs
+        </Link>
+
+        <PostHeader post={post} />
+
+        {post.author && post.published_at && (
+          <div className="mb-8">
+            <AuthorInfo author={post.author} publishedAt={post.published_at} />
+          </div>
+        )}
+
+        <div className="mb-8">
+          <TagList tags={post.tags} />
+        </div>
+
+        <Section variant="ghost" className="p-0!">
+          <div
+            className="prose prose-invert prose-lg max-w-none"
+            dangerouslySetInnerHTML={{ __html: htmlContent }}
           />
-        )}
-
-        <h1 className="text-4xl font-bold text-white mb-4">{post.title}</h1>
-
-        {post.excerpt && (
-          <p className="text-white/70 text-lg mb-6">{post.excerpt}</p>
-        )}
-
-        {post.author && (
-          <div className="flex items-center gap-3 mb-8">
-            {post.author.image && (
-              <Image
-                src={urlFor(post.author.image).width(48).height(48).url()}
-                alt={post.author.username ?? "Author"}
-                width={48}
-                height={48}
-                className="rounded-full"
-              />
-            )}
-            <span className="text-white/80">{post.author.username}</span>
-            <span className="text-white/80">
-              {formatTime(post.published_at)}
-            </span>
-          </div>
-        )}
-
-        {post.tags && post.tags.length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-8">
-            {post.tags.map((tag) => (
-              <Link
-                key={tag._id}
-                href={`/blog?tag=${tag.slug?.current}`}
-                className="px-3 py-1 rounded-full bg-white/20 text-white text-sm hover:bg-white/30 transition"
-              >
-                {tag.name}
-              </Link>
-            ))}
-          </div>
-        )}
-
-        <div
-          className="prose prose-invert prose-lg max-w-none"
-          dangerouslySetInnerHTML={{ __html: markdownContent }}
-        ></div>
+        </Section>
       </article>
     </div>
   );
-};
-
-export default page;
+}

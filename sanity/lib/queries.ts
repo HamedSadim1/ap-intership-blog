@@ -1,3 +1,4 @@
+
 import { defineQuery } from "next-sanity";
 
 export const allPostsQuery = defineQuery(`*[_type == "post" && select(

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { NavItem } from "../../data/navbar";
+import { HomeIcon, BlogIcon, UserIcon } from "../svgs";
 
 /**
  * Props voor NavLink component
@@ -35,6 +36,21 @@ const NavLink = ({ item, variant = "desktop", onClick }: NavLinkProps) => {
   const isActive =
     item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
 
+  // Render juiste icon op basis van iconName
+  const renderIcon = () => {
+    const iconClassName = "w-5 h-5";
+    switch (item.iconName) {
+      case "home":
+        return <HomeIcon className={iconClassName} />;
+      case "blog":
+        return <BlogIcon className={iconClassName} />;
+      case "user":
+        return <UserIcon className={iconClassName} />;
+      default:
+        return null;
+    }
+  };
+
   const baseStyles = "font-medium transition-colors";
   const activeStyles = "text-white";
   const inactiveStyles = "text-white/60 hover:text-white";
@@ -60,12 +76,16 @@ const NavLink = ({ item, variant = "desktop", onClick }: NavLinkProps) => {
       onClick={onClick}
       className={combinedStyles}
       aria-current={isActive ? "page" : undefined}
+      scroll={false}
       {...(item.external && {
         target: "_blank",
         rel: "noopener noreferrer",
       })}
     >
-      {item.label}
+      <span className="flex items-center gap-2">
+        {renderIcon()}
+        <span>{item.label}</span>
+      </span>
       {/* Underline effect - altijd zichtbaar bij active, hover bij inactive */}
       {variant === "desktop" && (
         <span

@@ -61,7 +61,7 @@ const Hero = () => {
         <div className="flex flex-col sm:flex-row gap-4 justify-center mb-10">
           <Button
             href={portfolioButtonData.href}
-            external
+            external={portfolioButtonData.external}
             icon={<ArrowRightIcon className="w-5 h-5" />}
           >
             {portfolioButtonData.label}

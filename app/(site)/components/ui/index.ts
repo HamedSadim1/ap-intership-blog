@@ -14,6 +14,7 @@
  * - MobileMenuButton: Hamburger menu toggle
  */
 export { default as GlassCard } from "./GlassCard";
+export { default as Section } from "./Section";
 export { default as Badge } from "./Badge";
 export { default as Button } from "./Button";
 export { default as InfoCard } from "./InfoCard";

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { navbarConfig, NavItem } from "../data";
 import { NavLink, NavBrand, MobileMenuButton } from "./ui";
+import AuthButton from "./AuthButton";
 
 /**
  * Props voor Navbar component
@@ -59,6 +60,7 @@ const Navbar = ({
               {items.map((item) => (
                 <NavLink key={item.href} item={item} variant="desktop" />
               ))}
+              <AuthButton />
             </div>
 
             {/* Mobile Menu Button */}
@@ -68,7 +70,7 @@ const Navbar = ({
           {/* Mobile Navigation */}
           <div
             className={`md:hidden overflow-hidden transition-all duration-300 ${
-              isOpen ? "max-h-64 mt-4 pt-4 border-t border-white/10" : "max-h-0"
+              isOpen ? "max-h-96 mt-4 pt-4 border-t border-white/10" : "max-h-0"
             }`}
           >
             <div className="flex flex-col gap-4">
@@ -80,6 +82,9 @@ const Navbar = ({
                   onClick={closeMenu}
                 />
               ))}
+              <div className="pt-4 border-t border-white/10">
+                <AuthButton />
+              </div>
             </div>
           </div>
         </div>

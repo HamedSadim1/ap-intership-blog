@@ -5,13 +5,21 @@
  * Iconen gebruiken stroke-based SVG voor consistente lijndikte.
  *
  * Beschikbare iconen:
+ * - HomeIcon: Huis (voor homepage)
+ * - BlogIcon: Documenten/artikel (voor blog)
+ * - UserIcon: Gebruiker/profiel (voor about)
  * - ArrowRightIcon: Pijl naar rechts (voor CTA buttons)
+ * - ArrowLeftIcon: Pijl naar links (voor terug navigatie)
  * - BuildingIcon: Gebouw/kantoor (voor locaties/bedrijven)
  * - ExternalLinkIcon: Externe link pijl (voor outbound links)
  * - MenuIcon: Hamburger menu (voor mobiele navigatie)
  * - CloseIcon: Sluit/kruis icoon (voor sluiten van menus)
  */
+export { default as HomeIcon } from "./HomeIcon";
+export { default as BlogIcon } from "./BlogIcon";
+export { default as UserIcon } from "./UserIcon";
 export { default as ArrowRightIcon } from "./ArrowRightIcon";
+export { default as ArrowLeftIcon } from "./ArrowLeftIcon";
 export { default as BuildingIcon } from "./BuildingIcon";
 export { default as ExternalLinkIcon } from "./ExternalLinkIcon";
 export { default as MenuIcon } from "./MenuIcon";
