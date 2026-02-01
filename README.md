@@ -13,7 +13,7 @@
 
 > 🎓 **AP Hogeschool** | Graduaat Programmeren | WPL Stage Portfolio
 >
-> 📅 Stage periode: **Februari 2026 - Mei 2026**
+> 📅 Stage periode: **Februari 2026 - Juni 2026**
 
 <br/>
 
