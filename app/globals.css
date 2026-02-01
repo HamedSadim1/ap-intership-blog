@@ -19,6 +19,12 @@
   --foreground: #ededed;
 }
 
+/* Voorkom layout shift door scrollbar */
+html {
+  overflow-y: scroll;
+  scrollbar-gutter: stable;
+}
+
 body {
   background: linear-gradient(
     to bottom right,

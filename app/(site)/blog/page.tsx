@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { getPosts, getTags } from "@/lib/sanity";
 import Image from "next/image";
 import { urlFor } from "@/sanity/lib/image";
@@ -6,6 +7,32 @@ import Link from "next/link";
 import { AuthorInfo, TagList } from "@/app/(site)/components/blog";
 import type { PageProps } from "@/types";
 
+// Enable ISR (Incremental Static Regeneration)
+export const revalidate = 60;
+
+/**
+ * Generate metadata for blog listing page
+ */
+export async function generateMetadata({
+  searchParams,
+}: PageProps): Promise<Metadata> {
+  const resolvedSearchParams = await searchParams;
+  const tag = resolvedSearchParams?.tag as string | undefined;
+
+  return {
+    title: tag ? `${tag} Posts | Stage Portfolio Blog` : "Stage Portfolio Blog",
+    description: tag
+      ? `Alle artikelen met tag: ${tag}`
+      : "Mijn ervaringen, reflecties en groei tijdens de stageperiode",
+  };
+}
+
+/**
+ * Blog Listing Page
+ *
+ * Supports tag filtering via searchParams
+ * Uses Promise.all for parallel data fetching
+ */
 export default async function BlogPage({ searchParams }: PageProps) {
   const resolvedSearchParams = await searchParams;
   const tag = resolvedSearchParams?.tag as string | undefined;

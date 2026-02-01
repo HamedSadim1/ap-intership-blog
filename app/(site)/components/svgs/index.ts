@@ -14,6 +14,7 @@
  * - ExternalLinkIcon: Externe link pijl (voor outbound links)
  * - MenuIcon: Hamburger menu (voor mobiele navigatie)
  * - CloseIcon: Sluit/kruis icoon (voor sluiten van menus)
+ * - GithubIcon: GitHub logo (voor authenticatie)
  */
 export { default as HomeIcon } from "./HomeIcon";
 export { default as BlogIcon } from "./BlogIcon";
@@ -24,3 +25,4 @@ export { default as BuildingIcon } from "./BuildingIcon";
 export { default as ExternalLinkIcon } from "./ExternalLinkIcon";
 export { default as MenuIcon } from "./MenuIcon";
 export { default as CloseIcon } from "./CloseIcon";
+export { default as GithubIcon } from "./GithubIcon";

@@ -1,4 +1,5 @@
-import { getPostBySlug } from "@/lib/sanity";
+import type { Metadata } from "next";
+import { getPostBySlug, getPostsStatic } from "@/lib/sanity";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { renderMarkdown } from "@/lib/utils/markdown";
@@ -8,6 +9,86 @@ import { ArrowLeftIcon } from "@/app/(site)/components/svgs";
 import type { PageProps } from "@/types";
 import "highlight.js/styles/github-dark.css";
 
+/**
+ * Next.js 15/16 Best Practices:
+ * - generateStaticParams: Pre-render post pages at build time
+ * - Revalidation: ISR with 60 second revalidation
+ * - Request Memoization: Next.js automatically deduplicates fetch requests
+ *   within the same render pass (generateMetadata + page component)
+ */
+
+// Enable ISR (Incremental Static Regeneration)
+export const revalidate = 60; // Revalidate every 60 seconds
+
+/**
+ * Generate static params for all blog posts at build time
+ * This enables Static Site Generation (SSG) with ISR
+ *
+ * Note: Uses getPostsStatic instead of getPosts to avoid draftMode
+ * errors during build time.
+ */
+export async function generateStaticParams() {
+  const posts = await getPostsStatic();
+
+  return posts.map((post) => ({
+    slug: post.slug?.current ?? "",
+  }));
+}
+
+/**
+ * Generate metadata for SEO
+ * Note: Next.js automatically memoizes getPostBySlug() calls,
+ * so this won't cause a duplicate fetch in the page component
+ */
+export const generateMetadata = async ({
+  params,
+}: PageProps): Promise<Metadata> => {
+  const resolvedParams = await params;
+  const slug = resolvedParams?.slug;
+
+  if (!slug) {
+    return {
+      title: "Blog Post Not Found",
+      description: "The requested blog post could not be found.",
+    };
+  }
+  const post = await getPostBySlug(slug);
+
+  if (!post) {
+    return {
+      title: "Blog Post Not Found",
+      description: "The requested blog post could not be found.",
+    };
+  }
+
+  return {
+    title: `${post.title || "Blog Post"} | Stage Portfolio`,
+    description: post.excerpt || "Lees dit artikel over mijn stage ervaring.",
+    openGraph: {
+      title: post.title || "Blog Post",
+      description: post.excerpt || "Lees dit artikel over mijn stage ervaring.",
+      type: "article",
+      publishedTime: post.published_at || undefined,
+      authors: post.author?.username ? [post.author.username] : undefined,
+      tags: post.tags?.map((tag) => tag.name).filter(Boolean) as
+        | string[]
+        | undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: post.title || "Blog Post",
+      description: post.excerpt || "Lees dit artikel over mijn stage ervaring.",
+    },
+  };
+};
+
+/**
+ * Blog Post Detail Page
+ *
+ * Next.js automatically memoizes getPostBySlug() - the same request
+ * in generateMetadata and this component results in only ONE fetch
+ * during the same render pass. This is called "Request Memoization".
+ */
 export default async function BlogPostPage({ params }: PageProps) {
   const resolvedParams = await params;
   const slug = resolvedParams?.slug;
@@ -16,6 +97,7 @@ export default async function BlogPostPage({ params }: PageProps) {
     notFound();
   }
 
+  // This fetch is automatically deduplicated with generateMetadata
   const post = await getPostBySlug(slug);
 
   if (!post) {
@@ -38,9 +120,14 @@ export default async function BlogPostPage({ params }: PageProps) {
         <PostHeader post={post} />
 
         {post.author && post.published_at && (
-          <div className="mb-8">
-            <AuthorInfo author={post.author} publishedAt={post.published_at} />
-          </div>
+          <Link href="/about">
+            <div className="mb-8">
+              <AuthorInfo
+                author={post.author}
+                publishedAt={post.published_at}
+              />
+            </div>
+          </Link>
         )}
 
         <div className="mb-8">

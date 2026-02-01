@@ -1,6 +1,7 @@
 import "server-only";
 
 import { sanityFetch } from "@/sanity/lib/live";
+import { client } from "@/sanity/lib/client"; // CDN client voor performance
 import {
   allPostsQuery,
   postBySlugQuery,
@@ -11,6 +12,19 @@ import {
   PostBySlugQueryResult,
   AllTagsQueryResult,
 } from "@/sanity/types";
+
+/**
+ * getPostsStatic - Build-time safe version for generateStaticParams
+ *
+ * Gebruikt directe client calls zonder draft mode.
+ * ALLEEN gebruiken in generateStaticParams!
+ */
+export async function getPostsStatic() {
+  const data = await client.fetch<AllPostsQueryResult>(allPostsQuery, {
+    tag: null as unknown as undefined,
+  });
+  return data;
+}
 
 /**
  * getPosts - Fetch alle posts from Sanity CMS

@@ -14,11 +14,15 @@ interface AuthorInfoProps {
 
 /**
  * AuthorInfo - Display author avatar, name, and publish date
- * 
+ *
  * Reusable component for both blog listing cards and post detail pages.
  * Supports compact mode for smaller displays.
  */
-export function AuthorInfo({ author, publishedAt, compact = false }: AuthorInfoProps) {
+export function AuthorInfo({
+  author,
+  publishedAt,
+  compact = false,
+}: AuthorInfoProps) {
   if (!author) return null;
 
   const avatarSize = compact ? 32 : 48;

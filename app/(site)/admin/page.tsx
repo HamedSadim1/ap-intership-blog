@@ -1,11 +1,25 @@
+import type { Metadata } from "next";
 import { getCurrentUser, getAuthorFromSanity } from "@/lib/auth-helpers";
 import { redirect } from "next/navigation";
 
-export const dynamic = 'force-dynamic';
+// Force dynamic rendering - this page requires authentication
+export const dynamic = "force-dynamic";
 
 /**
- * Voorbeeld: Admin-only pagina
- * Gebruikt server-side role verificatie via Sanity
+ * Metadata for admin page
+ */
+export const metadata: Metadata = {
+  title: "Admin Dashboard | Stage Portfolio",
+  description: "Admin dashboard voor het beheren van het stage portfolio",
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
+
+/**
+ * Admin Dashboard Page
+ * Protected route - requires admin role in Sanity
  */
 export default async function AdminPage() {
   // Server-side user fetch

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { BuildingIcon } from "../components/svgs";
 import {
   ProfileHeader,
@@ -15,6 +16,24 @@ import {
   linksData,
 } from "../data";
 
+/**
+ * Metadata for About page
+ */
+export const metadata: Metadata = {
+  title: "Over Mij | Stage Portfolio",
+  description:
+    "Student Graduaat Programmeren met passie voor webdevelopment en innovatieve technologieën.",
+  openGraph: {
+    title: "Over Mij | Stage Portfolio",
+    description:
+      "Student Graduaat Programmeren met passie voor webdevelopment en innovatieve technologieën.",
+    type: "profile",
+  },
+};
+
+/**
+ * About Page - Static content page
+ */
 export default function AboutPage() {
   return (
     <div className="bg-background relative min-h-screen pt-24 pb-16 overflow-x-hidden">
