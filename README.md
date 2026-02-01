@@ -158,7 +158,7 @@ ap-internship-blog/
 
 ## 🚀 Live Demo
 
-> 🔗 **Coming soon** — De blog wordt live gezet zodra de stage begint!
+> 🔗 **Live op:** [https://ap-intership-blog-adomate.vercel.app/](https://ap-intership-blog-adomate.vercel.app/)
 
 ---
 
