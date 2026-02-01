@@ -169,13 +169,13 @@ ap-internship-blog/
 
 <br/>
 
-| Home Page                                                   | Blog Overzicht                                                  |
-| ----------------------------------------------------------- | --------------------------------------------------------------- |
-| ![Home](https://via.placeholder.com/400x250?text=Home+Page) | ![Blog](https://via.placeholder.com/400x250?text=Blog+Overview) |
+| Home Page                                        | Blog Overzicht                                    |
+| ------------------------------------------------ | ------------------------------------------------- |
+| ![Home]("/public/screenshots/home-Stageblog.png) | ![Blog]("/public/screenshots/blog-Stageblog.png") |
 
-| Blog Post                                                   | Over Mij                                                    |
-| ----------------------------------------------------------- | ----------------------------------------------------------- |
-| ![Post](https://via.placeholder.com/400x250?text=Blog+Post) | ![About](https://via.placeholder.com/400x250?text=About+Me) |
+| Blog Post                                                   | Over Mij                                            |
+| ----------------------------------------------------------- | --------------------------------------------------- |
+| ![Post](https://via.placeholder.com/400x250?text=Blog+Post) | ![About]("/public/screenshots/about-Stageblog.png") |
 
 </details>
 
