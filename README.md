@@ -49,6 +49,8 @@ Als student Graduaat Programmeren aan AP Hogeschool gebruik ik deze blog om:
 - 💅 **Tailwind CSS 4** voor styling
 - 📱 Volledig **responsive** design
 - 🌙 Moderne glassmorphism UI
+- 🎨 **Reading progress** indicator
+- 📑 **Table of Contents** sidebar
 
 </td>
 <td width="50%">
@@ -57,13 +59,25 @@ Als student Graduaat Programmeren aan AP Hogeschool gebruik ik deze blog om:
 
 - 📝 **Sanity CMS** voor content management
 - 🔐 **Better Auth** authenticatie
-- 📖 **Markdown** ondersteuning met syntax highlighting
+- 📖 **Geavanceerde Markdown** met callouts, TOC, en meer
 - 🏷️ Tag-gebaseerde filtering
 - ⚡ Live content updates
 
 </td>
 </tr>
 </table>
+
+### ✨ Markdown Features
+
+- 📑 **Table of Contents** - Automatisch gegenereerde inhoudsopgave
+- 📊 **Mooie tabellen** - Professionele tabel styling met hover effects
+- 💬 **Callout boxes** - Success, Warning, Info, en Danger containers
+- 📋 **Copy button** - Kopieer code blocks met één klik
+- 🔗 **Heading anchors** - Deep linking naar specifieke secties
+- 📈 **Reading progress** - Visuele voortgangsbalk tijdens lezen
+- 🎨 **Syntax highlighting** - Code highlighting voor 180+ talen
+
+👉 **Zie [MARKDOWN_GUIDE.md](MARKDOWN_GUIDE.md) voor complete handleiding**
 
 ### 📄 Pagina's
 
@@ -73,6 +87,18 @@ Als student Graduaat Programmeren aan AP Hogeschool gebruik ik deze blog om:
 | 📝 **Blog**     | Overzicht van alle stage verslagen met filters |
 | 👤 **Over Mij** | Persoonlijke informatie en leerdoelen          |
 | ✍️ **Admin**    | Content beheer via Sanity Studio               |
+
+### 📝 Blog Post Features
+
+Elke blog post bevat:
+- 📊 **Metadata** - Titel, excerpt, datum, auteur, tags
+- 📑 **Table of Contents** - Sticky sidebar met active highlighting
+- 📈 **Reading Progress** - Real-time voortgangsbalk
+- 💬 **Callout Boxes** - Visuele highlights voor belangrijke info
+- 📋 **Code Blocks** - Syntax highlighting + copy button
+- 🔗 **Deep Linking** - Directe links naar specifieke secties
+- 📊 **Tabellen** - Professioneel gestyled met hover effects
+- 🏷️ **Tags** - Categorisatie en filtering
 
 ---
 
@@ -154,6 +180,12 @@ ap-internship-blog/
 | `npm run lint`    | Voer ESLint uit          |
 | `npm run typegen` | Genereer Sanity types    |
 
+### 📚 Documentatie Bestanden
+
+- **[MARKDOWN_GUIDE.md](MARKDOWN_GUIDE.md)** - Complete handleiding voor markdown features
+- **[PERFORMANCE.md](PERFORMANCE.md)** - Performance optimalisatie documentatie
+- **[REFACTORING.md](REFACTORING.md)** - Refactoring geschiedenis en best practices
+
 ---
 
 ## 🚀 Live Demo
@@ -229,6 +261,26 @@ Tijdens mijn stage focus ik op de volgende ontwikkelgebieden:
 ![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)
 
 </div>
+
+### 📦 Belangrijkste Dependencies
+
+**Frontend:**
+- `next` (16.1+) - React framework met App Router
+- `react` (19+) - UI library met Server Components
+- `tailwindcss` (4.1+) - Utility-first CSS framework
+- `better-auth` - Moderne authenticatie oplossing
+
+**Content & Markdown:**
+- `@sanity/client` - Sanity CMS integratie
+- `next-sanity` - Next.js + Sanity optimalisatie
+- `markdown-it` - Markdown parser
+- `markdown-it-anchor` - Automatische heading anchors
+- `markdown-it-container` - Custom callout containers
+- `highlight.js` - Syntax highlighting voor code blocks
+
+**Utilities:**
+- `clsx` - Conditional className helper
+- `date-fns` - Datum formatting
 
 ---
 

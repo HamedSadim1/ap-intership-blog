@@ -19,10 +19,59 @@
   --foreground: #ededed;
 }
 
-/* Voorkom layout shift door scrollbar */
+/**
+ * SCROLLBAR CONFIGURATIE
+ * 
+ * Doel: Voorkom layout shift + custom styling voor de scrollbar
+ * 
+ * STAP 1: Voorkom layout shift
+ * - overflow-y: scroll zorgt dat scrollbar ALTIJD zichtbaar is
+ * - scrollbar-gutter: stable reserveert ruimte voor scrollbar
+ * - Dit voorkomt dat content "springt" als scrollbar verschijnt
+ */
 html {
   overflow-y: scroll;
   scrollbar-gutter: stable;
+}
+
+/**
+ * STAP 2: Custom scrollbar styling voor Chrome, Safari, Edge
+ * 
+ * Deze ::-webkit-scrollbar pseudo-elementen werken alleen in
+ * Chromium-based browsers (Chrome, Edge, Opera, Safari)
+ */
+
+/* De scrollbar zelf (breedte en hoogte) */
+::-webkit-scrollbar {
+  width: 8px; /* Verticale scrollbar: 8px breed (default is ~15-17px) */
+  height: 8px; /* Horizontale scrollbar: 8px hoog */
+}
+
+/* Het "track" gebied waar de thumb in scrollt */
+::-webkit-scrollbar-track {
+  background: transparent; /* Volledig transparant, laat gradient achtergrond zien */
+}
+
+/* De scrollbare "thumb" (het deel dat je sleept) */
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2); /* Semi-transparant wit (20% opacity) */
+  border-radius: 4px; /* Afgeronde hoeken voor moderne look */
+}
+
+/* Thumb hover state - wordt lichter bij hover */
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3); /* Verhoog opacity naar 30% bij hover */
+}
+
+/**
+ * STAP 3: Custom scrollbar styling voor Firefox
+ * 
+ * Firefox gebruikt een andere CSS syntax voor scrollbars
+ * Toegepast op alle elementen (*) voor consistentie
+ */
+* {
+  scrollbar-width: thin; /* 'auto' | 'thin' | 'none' - thin = slankere scrollbar */
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent; /* thumb-color track-color */
 }
 
 body {
@@ -33,7 +82,12 @@ body {
     rgb(236 72 153)
   );
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.6;
+  letter-spacing: -0.5px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 @utility bg-background {
@@ -43,30 +97,77 @@ body {
 /* Prose styling for markdown content */
 .prose {
   color: white;
+  font-size: 1.05rem;
+  line-height: 1.8;
 }
 
-.prose h1,
-.prose h2,
-.prose h3,
+.prose h1 {
+  color: white;
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 2rem 0 1rem 0;
+  letter-spacing: -1px;
+}
+
+.prose h2 {
+  color: white;
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 1.8rem 0 0.8rem 0;
+  letter-spacing: -0.5px;
+}
+
+.prose h3 {
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.4;
+  margin: 1.5rem 0 0.6rem 0;
+}
+
 .prose h4 {
   color: white;
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 1.2rem 0 0.5rem 0;
 }
 
 .prose p {
-  color: rgba(255, 255, 255, 0.85);
+  color: rgba(255, 255, 255, 0.9);
+  margin: 1.2rem 0;
+  line-height: 1.8;
 }
 
 .prose a {
   color: #93c5fd;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+  transition: color 0.2s ease;
+}
+
+.prose a:hover {
+  color: #dbeafe;
 }
 
 .prose strong {
   color: white;
+  font-weight: 600;
 }
 
 .prose ul,
 .prose ol {
-  color: rgba(255, 255, 255, 0.85);
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.8;
+  margin: 1.2rem 0;
+  padding-left: 2rem;
+}
+
+.prose li {
+  margin: 0.6rem 0;
+  line-height: 1.7;
 }
 
 .prose pre {
@@ -93,12 +194,214 @@ body {
 }
 
 .prose blockquote {
-  border-left: 4px solid rgba(255, 255, 255, 0.3);
-  padding-left: 1rem;
-  color: rgba(255, 255, 255, 0.7);
+  border-left: 4px solid rgba(147, 197, 253, 0.5);
+  padding-left: 1.5rem;
+  color: rgba(255, 255, 255, 0.85);
   font-style: italic;
+  margin: 1.5rem 0;
+  font-size: 1.05rem;
+  line-height: 1.8;
 }
 
 .prose hr {
   border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Tables - Mooie styling voor markdown tabellen */
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.prose thead {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.prose th {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-weight: 600;
+  color: white;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.prose td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.prose tbody tr:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Callout/Container styling */
+.callout {
+  padding: 1rem 1.25rem;
+  margin: 1.5rem 0;
+  border-radius: 0.5rem;
+  border-left: 4px solid;
+  backdrop-filter: blur(10px);
+}
+
+.callout-success {
+  background: rgba(34, 197, 94, 0.1);
+  border-left-color: #22c55e;
+  color: #86efac;
+}
+
+.callout-warning {
+  background: rgba(251, 191, 36, 0.1);
+  border-left-color: #fbbf24;
+  color: #fcd34d;
+}
+
+.callout-info {
+  background: rgba(59, 130, 246, 0.1);
+  border-left-color: #3b82f6;
+  color: #93c5fd;
+}
+
+.callout-danger {
+  background: rgba(239, 68, 68, 0.1);
+  border-left-color: #ef4444;
+  color: #fca5a5;
+}
+
+.callout p {
+  margin: 0;
+  color: inherit;
+}
+
+/* Heading anchors */
+.heading-anchor {
+  color: rgba(255, 255, 255, 0.3);
+  text-decoration: none;
+  margin-right: 0.5rem;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.prose h1:hover .heading-anchor,
+.prose h2:hover .heading-anchor,
+.prose h3:hover .heading-anchor,
+.prose h4:hover .heading-anchor {
+  opacity: 1;
+}
+
+.heading-anchor:hover {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Verbeterde spacing */
+.prose h1 {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  font-size: 2.25rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.prose h2 {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  font-size: 1.875rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.prose h3 {
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.prose h4 {
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.prose p {
+  margin-bottom: 1.25rem;
+  line-height: 1.75;
+}
+
+/* Verbeterde list styling */
+.prose ul,
+.prose ol {
+  margin: 1rem 0;
+  padding-left: 1.75rem;
+}
+
+.prose li {
+  margin-bottom: 0.5rem;
+  line-height: 1.75;
+}
+
+.prose li::marker {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Inline code verbetering */
+.prose :not(pre) > code {
+  background: rgba(168, 85, 247, 0.15);
+  color: #e9d5ff;
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.875em;
+  font-weight: 500;
+  border: 1px solid rgba(168, 85, 247, 0.2);
+}
+
+/* Image styling */
+.prose img {
+  border-radius: 0.5rem;
+  margin: 1.5rem 0;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+/* Copy button voor code blocks */
+.copy-button {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  backdrop-filter: blur(8px);
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
+}
+
+.copy-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.copy-button.copied {
+  background: rgba(34, 197, 94, 0.2);
+  border-color: #22c55e;
+  color: #86efac;
+}
+
+/* Zorg dat pre position relative is voor absolute button */
+.prose pre {
+  position: relative;
+  padding-right: 6rem; /* Ruimte voor copy button */
 }

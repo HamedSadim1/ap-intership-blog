@@ -13,6 +13,7 @@ import {
   personalInfoData,
   companyData,
   learningGoalsData,
+  contactData,
   linksData,
 } from "../data";
 
@@ -86,7 +87,21 @@ export default function AboutPage() {
           </div>
         </InfoSection>
 
-        {/* Contact / Links */}
+        {/* Contact */}
+        <InfoSection title={contactData.title}>
+          <p className="text-white/80 leading-relaxed mb-4">
+            {contactData.description}
+          </p>
+          <a
+            href={`mailto:${contactData.email}`}
+            className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 text-white rounded-lg font-medium transition-all duration-300 hover:scale-105 hover:shadow-lg cursor-pointer"
+          >
+            <span>✉️</span>
+            <span>{contactData.email}</span>
+          </a>
+        </InfoSection>
+
+        {/* Links */}
         <InfoSection title={linksData.title}>
           <div className="flex flex-wrap gap-4">
             {linksData.links.map((link, index) => (

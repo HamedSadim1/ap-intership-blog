@@ -1,9 +1,10 @@
 import { defineQuery } from "next-sanity";
 
-export const allPostsQuery = defineQuery(`*[_type == "post" && select(
+export const allPostsQuery =
+  defineQuery(`*[_type == "post" && status == "published" && select(
     defined($tag) => $tag in tags[]->slug.current,
     true
-  )] | order(publishedAt desc) {
+  )] | order(published_at desc) {
   _id,
   title,
   slug,
@@ -27,7 +28,7 @@ export const allPostsQuery = defineQuery(`*[_type == "post" && select(
 }`);
 
 export const postBySlugQuery =
-  defineQuery(`*[_type == "post" && slug.current == $slug][0] {
+  defineQuery(`*[_type == "post" && slug.current == $slug && status == "published"][0] {
   _id,
   title,
   slug,

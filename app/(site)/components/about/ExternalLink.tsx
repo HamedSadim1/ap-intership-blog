@@ -36,7 +36,7 @@ export function ExternalLink({
       href={href}
       target={external ? "_blank" : undefined}
       rel={external ? "noopener noreferrer" : undefined}
-      className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-white transition-colors ${variantStyles[variant]}`}
+      className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-white transition-colors cursor-pointer ${variantStyles[variant]}`}
     >
       {children}
       {external && <ExternalLinkIcon className="w-4 h-4" />}

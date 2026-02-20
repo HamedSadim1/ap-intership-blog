@@ -7,6 +7,13 @@
 // Date & Time utilities
 export { formatTime, formatDate, getRelativeTime } from "./date";
 
+// Style utilities (DRY principe)
+export * from "./styles";
+export * from "./tag-styles";
+
+// Markdown utilities
+export { renderMarkdown, extractHeadings } from "./markdown";
+
 /**
  * String Utilities
  */
@@ -91,7 +98,7 @@ export function unique<T>(arr: T[]): T[] {
  */
 export function groupBy<T>(
   arr: T[],
-  key: (item: T) => string
+  key: (item: T) => string,
 ): Record<string, T[]> {
   return arr.reduce(
     (result, item) => {
@@ -102,7 +109,7 @@ export function groupBy<T>(
       result[groupKey].push(item);
       return result;
     },
-    {} as Record<string, T[]>
+    {} as Record<string, T[]>,
   );
 }
 

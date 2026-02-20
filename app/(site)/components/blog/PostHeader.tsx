@@ -27,9 +27,9 @@ export function PostHeader({ post }: PostHeaderProps) {
 
       <h1 className="text-4xl font-bold text-white mb-4">{post.title}</h1>
 
-      {post.excerpt && (
+      {/* {post.excerpt && (
         <p className="text-white/70 text-lg mb-6">{post.excerpt}</p>
-      )}
+      )} */}
     </header>
   );
 }

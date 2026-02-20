@@ -2,23 +2,32 @@ import type { Metadata } from "next";
 import { getPostBySlug, getPostsStatic } from "@/lib/sanity";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { renderMarkdown } from "@/lib/utils/markdown";
-import { PostHeader, AuthorInfo, TagList } from "@/app/(site)/components/blog";
+import { renderMarkdown, extractHeadings } from "@/lib/utils/markdown";
+import {
+  PostHeader,
+  AuthorInfo,
+  TagList,
+  TableOfContents,
+  CodeBlockEnhancer,
+  ReadingProgress,
+} from "@/app/(site)/components/blog";
 import Section from "@/app/(site)/components/ui/Section";
 import { ArrowLeftIcon } from "@/app/(site)/components/svgs";
 import type { PageProps } from "@/types";
+import type {
+  AllPostsQueryResult,
+  PostBySlugQueryResult,
+} from "@/sanity/types";
+import { DEFAULT_METADATA } from "@/lib/constants";
 import "highlight.js/styles/github-dark.css";
 
 /**
- * Next.js 15/16 Best Practices:
- * - generateStaticParams: Pre-render post pages at build time
- * - Revalidation: ISR with 60 second revalidation
- * - Request Memoization: Next.js automatically deduplicates fetch requests
- *   within the same render pass (generateMetadata + page component)
+ * ISR Revalidate: 5 seconden
+ * Next.js vereist literal value (geen import)
+ * Met serverToken enabled in sanityFetch: real-time updates
+ * Zie: lib/constants.ts voor gedeelde config
  */
-
-// Enable ISR (Incremental Static Regeneration)
-export const revalidate = 60; // Revalidate every 60 seconds
+export const revalidate = 5;
 
 /**
  * Generate static params for all blog posts at build time
@@ -30,7 +39,7 @@ export const revalidate = 60; // Revalidate every 60 seconds
 export async function generateStaticParams() {
   const posts = await getPostsStatic();
 
-  return posts.map((post) => ({
+  return posts.map((post: AllPostsQueryResult[number]) => ({
     slug: post.slug?.current ?? "",
   }));
 }
@@ -62,17 +71,23 @@ export const generateMetadata = async ({
   }
 
   return {
-    title: `${post.title || "Blog Post"} | Stage Portfolio`,
-    description: post.excerpt || "Lees dit artikel over mijn stage ervaring.",
+    title: `${post.title || "Blog Post"} | ${DEFAULT_METADATA.siteName}`,
+    description: post.excerpt || DEFAULT_METADATA.siteDescription,
     openGraph: {
       title: post.title || "Blog Post",
       description: post.excerpt || "Lees dit artikel over mijn stage ervaring.",
       type: "article",
       publishedTime: post.published_at || undefined,
       authors: post.author?.username ? [post.author.username] : undefined,
-      tags: post.tags?.map((tag) => tag.name).filter(Boolean) as
-        | string[]
-        | undefined,
+      tags: post.tags
+        ?.map(
+          (
+            tag: NonNullable<
+              NonNullable<PostBySlugQueryResult>["tags"]
+            >[number],
+          ) => tag.name,
+        )
+        .filter(Boolean) as string[] | undefined,
     },
     twitter: {
       card: "summary_large_image",
@@ -105,42 +120,55 @@ export default async function BlogPostPage({ params }: PageProps) {
   }
 
   const htmlContent = renderMarkdown(post.body || "");
+  const headings = extractHeadings(post.body || "");
 
   return (
     <div className="bg-background relative min-h-screen pt-24 overflow-x-hidden">
-      <article className="max-w-3xl mx-auto p-4">
+      <ReadingProgress />
+      <div className="max-w-7xl mx-auto p-4">
         <Link
           href="/blog"
-          className="inline-flex items-center gap-2 mb-6 text-sm text-gray-400 hover:text-white transition-colors"
+          className="inline-flex items-center gap-2 mb-6 text-sm text-gray-400 hover:text-white transition-colors cursor-pointer"
         >
           <ArrowLeftIcon className="h-4 w-4" />
           Terug naar blogs
         </Link>
 
-        <PostHeader post={post} />
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-8">
+          {/* Main Content */}
+          <article>
+            {/* <PostHeader post={post} /> */}
 
-        {post.author && post.published_at && (
-          <Link href="/about">
+            {post.author && post.published_at && (
+              <Link href="/about" className="cursor-pointer">
+                <div className="mb-8">
+                  <AuthorInfo
+                    author={post.author}
+                    publishedAt={post.published_at}
+                  />
+                </div>
+              </Link>
+            )}
+
             <div className="mb-8">
-              <AuthorInfo
-                author={post.author}
-                publishedAt={post.published_at}
-              />
+              <TagList tags={post.tags} />
             </div>
-          </Link>
-        )}
 
-        <div className="mb-8">
-          <TagList tags={post.tags} />
+            <Section variant="ghost" className="p-0!">
+              <div
+                className="prose prose-invert prose-lg max-w-none"
+                dangerouslySetInnerHTML={{ __html: htmlContent }}
+              />
+              <CodeBlockEnhancer />
+            </Section>
+          </article>
+
+          {/* Sidebar - Table of Contents */}
+          <aside className="hidden lg:block">
+            <TableOfContents headings={headings} />
+          </aside>
         </div>
-
-        <Section variant="ghost" className="p-0!">
-          <div
-            className="prose prose-invert prose-lg max-w-none"
-            dangerouslySetInnerHTML={{ __html: htmlContent }}
-          />
-        </Section>
-      </article>
+      </div>
     </div>
   );
 }

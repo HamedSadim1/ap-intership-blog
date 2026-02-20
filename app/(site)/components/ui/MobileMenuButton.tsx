@@ -29,7 +29,7 @@ const MobileMenuButton = ({
   return (
     <button
       onClick={onClick}
-      className={`md:hidden text-white p-2 hover:bg-white/10 rounded-lg transition-colors ${className}`}
+      className={`md:hidden text-white p-2 hover:bg-white/10 rounded-lg transition-colors cursor-pointer ${className}`}
       aria-label={isOpen ? "Sluit menu" : "Open menu"}
       aria-expanded={isOpen}
     >

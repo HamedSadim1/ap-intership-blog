@@ -6,9 +6,15 @@ import TagFilter from "@/app/components/TagFilter";
 import Link from "next/link";
 import { AuthorInfo, TagList } from "@/app/(site)/components/blog";
 import type { PageProps } from "@/types";
+import { DEFAULT_METADATA } from "@/lib/constants";
 
-// Enable ISR (Incremental Static Regeneration)
-export const revalidate = 60;
+/**
+ * ISR Revalidate: 5 seconden
+ * Next.js vereist literal value (geen import)
+ * Met serverToken enabled in sanityFetch: real-time updates
+ * Zie: lib/constants.ts voor gedeelde config
+ */
+export const revalidate = 5;
 
 /**
  * Generate metadata for blog listing page
@@ -20,10 +26,12 @@ export async function generateMetadata({
   const tag = resolvedSearchParams?.tag as string | undefined;
 
   return {
-    title: tag ? `${tag} Posts | Stage Portfolio Blog` : "Stage Portfolio Blog",
+    title: tag
+      ? `${tag} Posts | ${DEFAULT_METADATA.blogTitle}`
+      : DEFAULT_METADATA.blogTitle,
     description: tag
       ? `Alle artikelen met tag: ${tag}`
-      : "Mijn ervaringen, reflecties en groei tijdens de stageperiode",
+      : DEFAULT_METADATA.siteDescription,
   };
 }
 
@@ -74,7 +82,10 @@ export default async function BlogPage({ searchParams }: PageProps) {
                 key={post._id}
                 className="group bg-white/10 backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"
               >
-                <Link href={`/blog/${post.slug?.current}`} className="block">
+                <Link
+                  href={`/blog/${post.slug?.current}`}
+                  className="block cursor-pointer"
+                >
                   {/* Image */}
                   <div className="relative aspect-video overflow-hidden">
                     {post.featured_image ? (

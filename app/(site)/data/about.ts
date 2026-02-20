@@ -64,6 +64,14 @@ export const learningGoalsData = {
   ],
 };
 
+/** Contact informatie */
+export const contactData = {
+  title: "Contact",
+  email: "hamid.sadim@outlook.com",
+  description:
+    "Heb je vragen of wil je meer weten over mijn stage-ervaring? Neem gerust contact op!",
+};
+
 /** Links sectie */
 export const linksData = {
   title: "Links",

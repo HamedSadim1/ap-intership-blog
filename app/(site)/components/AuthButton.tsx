@@ -8,7 +8,7 @@ import { GithubIcon } from "./svgs";
 // Constanten voor herbruikbare waarden
 const BUTTON_SIZE = "w-10 h-10" as const;
 const BASE_BUTTON_STYLES =
-  "group relative rounded-lg transition-all duration-200 hover:scale-110 active:scale-95" as const;
+  "group relative rounded-lg transition-all duration-200 hover:scale-110 active:scale-95 cursor-pointer" as const;
 const BORDER_STYLES =
   "border-2 border-white/20 group-hover:border-white/40" as const;
 
