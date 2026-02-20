@@ -10,7 +10,7 @@
  * BELANGRIJK: Next.js revalidate vereist een literal value in page files!
  * Gebruik deze constant als documentatie/referentie.
  * In pages moet je: export const revalidate = 5;
- * 
+ *
  * 5 seconden is optimal voor snelle updates zonder performance issues
  */
 export const ISR_REVALIDATE_TIME = 5; // 5 seconden
