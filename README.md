@@ -141,10 +141,6 @@ Maak een `.env.local` bestand aan met de volgende variabelen:
 NEXT_PUBLIC_SANITY_PROJECT_ID=your_project_id
 NEXT_PUBLIC_SANITY_DATASET=production
 SANITY_API_READ_TOKEN=your_read_token
-
-# Authentication
-BETTER_AUTH_SECRET=your_secret_key
-BETTER_AUTH_URL=http://localhost:3000
 ```
 
 ---

@@ -10,6 +10,6 @@ import { client } from "./client";
 // See: https://www.sanity.io/docs/content-lake/live-content-api
 export const { sanityFetch, SanityLive } = defineLive({
   client,
-  serverToken: process.env.SANITY_READWRITE_TOKEN || false, // Enable live updates
+  serverToken: process.env.SANITY_READWRITE_TOKEN || false, // Only on production
   browserToken: false, // Keep disabled for client-side compatibility
 });
