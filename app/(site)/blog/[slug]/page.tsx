@@ -1,48 +1,35 @@
-import type { Metadata } from "next";
-import { getPostBySlug, getPostsStatic } from "@/lib/sanity";
-import { notFound } from "next/navigation";
-import Link from "next/link";
-import { renderMarkdown, extractHeadings } from "@/lib/utils/markdown";
 import {
-  PostHeader,
   AuthorInfo,
-  TagList,
-  TableOfContents,
   CodeBlockEnhancer,
   ReadingProgress,
+  TableOfContents,
+  TagList,
 } from "@/app/(site)/components/blog";
-import Section from "@/app/(site)/components/ui/Section";
 import { ArrowLeftIcon } from "@/app/(site)/components/svgs";
-import type { PageProps } from "@/types";
-import type {
-  AllPostsQueryResult,
-  PostBySlugQueryResult,
-} from "@/sanity/types";
+import Section from "@/app/(site)/components/ui/Section";
 import { DEFAULT_METADATA } from "@/lib/constants";
+import { getPostBySlug } from "@/lib/sanity";
+import { extractHeadings, renderMarkdown } from "@/lib/utils/markdown";
+import type { PostBySlugQueryResult } from "@/sanity/types";
+import type { PageProps } from "@/types";
 import "highlight.js/styles/github-dark.css";
+import type { Metadata } from "next";
+import Link from "next/link";
+import { notFound } from "next/navigation";
 
 /**
- * ISR Revalidate: 5 seconden
+ * Dynamic Route - Altijd live data ophalen
+ * Er is geen generateStaticParams, dus alle routes zijn dynamic
+ * Next.js zal posts on-demand genereren en cachen
+ */
+export const dynamic = "force-dynamic";
+
+/**
+ * ISR Revalidate: 1 seconde voor snelle updates
  * Next.js vereist literal value (geen import)
- * Met serverToken enabled in sanityFetch: real-time updates
- * Zie: lib/constants.ts voor gedeelde config
+ * Elk moment dat een post gepubliceerd wordt, zie je het binnen 1 seconde
  */
-export const revalidate = 5;
-
-/**
- * Generate static params for all blog posts at build time
- * This enables Static Site Generation (SSG) with ISR
- *
- * Note: Uses getPostsStatic instead of getPosts to avoid draftMode
- * errors during build time.
- */
-export async function generateStaticParams() {
-  const posts = await getPostsStatic();
-
-  return posts.map((post: AllPostsQueryResult[number]) => ({
-    slug: post.slug?.current ?? "",
-  }));
-}
+export const revalidate = 1;
 
 /**
  * Generate metadata for SEO

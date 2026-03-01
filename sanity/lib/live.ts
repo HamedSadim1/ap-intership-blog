@@ -4,10 +4,10 @@
 import { defineLive } from "next-sanity/live";
 import { client } from "./client";
 
-// Keep live previewing disabled to avoid React 19 compatibility issues
-// Instead, use ISR with short revalidate time (5 seconds) for near-real-time updates
+// Enable serverToken for real-time live updates with SANITY_READWRITE_TOKEN
+// Combines ISR (1 second revalidate) with live preview for instant content updates
 export const { sanityFetch, SanityLive } = defineLive({
   client,
-  serverToken: false, // Keep disabled for compatibility
+  serverToken: process.env.SANITY_READWRITE_TOKEN || false, // Real-time updates
   browserToken: false, // Keep disabled for client-side compatibility
 });
