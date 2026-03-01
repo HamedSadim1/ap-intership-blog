@@ -1,7 +1,7 @@
 import "server-only";
 
 import { sanityFetch } from "@/sanity/lib/live";
-import { client } from "@/sanity/lib/client"; // CDN client voor performance
+import { client } from "@/sanity/lib/client";
 import {
   allPostsQuery,
   postBySlugQuery,
@@ -29,20 +29,12 @@ export async function getPostsStatic() {
 /**
  * getPosts - Fetch alle posts from Sanity CMS
  *
- * Haalt alle posts op van Sanity CMS met optionele tag filtering.
- * Gebruikt sanityFetch voor live updates en type-safe results.
+ * Uses Live Content API with serverToken for real-time tagged updates.
+ * next-sanity automatically caches responses and revalidates only when
+ * the requested content actually changes (not on a time interval).
  *
  * @param tag - Optionele tag slug om posts te filteren
- * @returns Promise met posts data en metadata
- *
- * @example
- * ```tsx
- * // In een Server Component
- * const { data: posts } = await getPosts();
- *
- * // Met tag filtering
- * const { data: posts } = await getPosts("typescript");
- * ```
+ * @returns Promise met posts data
  */
 export async function getPosts(tag?: string | null) {
   const { data } = await sanityFetch({
@@ -55,21 +47,11 @@ export async function getPosts(tag?: string | null) {
 /**
  * getPostBySlug - Fetch een specifieke post by slug
  *
- * Haalt een enkele post op op basis van de slug parameter.
- * Retourneert null als de post niet gevonden wordt.
+ * Uses Live Content API with serverToken for real-time tagged updates.
+ * Changes to this post automatically trigger revalidation.
  *
  * @param slug - De unieke slug van de post
  * @returns Promise met post data of null
- *
- * @example
- * ```tsx
- * // In een Server Component
- * const { data: post } = await getPostBySlug("mijn-eerste-post");
- *
- * if (!post) {
- *   notFound();
- * }
- * ```
  */
 export async function getPostBySlug(slug: string) {
   const { data } = await sanityFetch({
@@ -82,19 +64,10 @@ export async function getPostBySlug(slug: string) {
 /**
  * getTags - Fetch alle tags from Sanity CMS
  *
- * Haalt alle beschikbare tags op gesorteerd op naam.
- * Gebruikt voor tag filtering en navigatie.
+ * Uses Live Content API with serverToken for real-time tagged updates.
+ * Changes to tags automatically trigger revalidation.
  *
  * @returns Promise met tags array
- *
- * @example
- * ```tsx
- * // In een Server Component
- * const { data: tags } = await getTags();
- *
- * // Gebruik in een component
- * <TagFilter tags={tags} />
- * ```
  */
 export async function getTags() {
   const { data } = await sanityFetch({

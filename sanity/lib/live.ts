@@ -4,10 +4,12 @@
 import { defineLive } from "next-sanity/live";
 import { client } from "./client";
 
-// Enable serverToken for real-time live updates with SANITY_READWRITE_TOKEN
-// Combines ISR (1 second revalidate) with live preview for instant content updates
+// Enable Live Content API with serverToken for real-time tagged updates
+// next-sanity automatically handles cache invalidation based on content changes
+// Public content: serverToken enables live updates without auth complexity
+// See: https://www.sanity.io/docs/content-lake/live-content-api
 export const { sanityFetch, SanityLive } = defineLive({
   client,
-  serverToken: process.env.SANITY_READWRITE_TOKEN || false, // Real-time updates
+  serverToken: process.env.SANITY_READWRITE_TOKEN || false, // Enable live updates
   browserToken: false, // Keep disabled for client-side compatibility
 });

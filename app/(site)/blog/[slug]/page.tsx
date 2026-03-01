@@ -25,11 +25,11 @@ import { notFound } from "next/navigation";
 export const dynamic = "force-dynamic";
 
 /**
- * ISR Revalidate: 1 seconde voor snelle updates
- * Next.js vereist literal value (geen import)
- * Elk moment dat een post gepubliceerd wordt, zie je het binnen 1 seconde
+ * No Caching - real-time updates
+ * force-dynamic requiret revalidate: 0 (geen ISR caching)
+ * Elke request haalt completely fresh data op
  */
-export const revalidate = 1;
+export const revalidate = 0;
 
 /**
  * Generate metadata for SEO

@@ -9,12 +9,10 @@ import type { PageProps } from "@/types";
 import { DEFAULT_METADATA } from "@/lib/constants";
 
 /**
- * ISR Revalidate: 5 seconden
- * Next.js vereist literal value (geen import)
- * Met serverToken enabled in sanityFetch: real-time updates
- * Zie: lib/constants.ts voor gedeelde config
+ * Live Content API with smart tag-based revalidation
+ * revalidate: 3600 (1 hour) is a fallback - actual revalidation happens when content changes
  */
-export const revalidate = 5;
+export const revalidate = 3600;
 
 /**
  * Generate metadata for blog listing page
