@@ -8,6 +8,18 @@ import markdownItAnchor from "markdown-it-anchor";
 import markdownItContainer from "markdown-it-container";
 
 /**
+ * Simple HTML escape function
+ */
+function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+/**
  * Configure markdown-it with extensive plugins for rich content
  *
  * Features:
@@ -27,7 +39,7 @@ export const md = new MarkdownIt({
         console.error("Highlight.js error:", error);
       }
     }
-    return `<pre class="hljs"><code>${MarkdownIt.prototype.utils.escapeHtml(str)}</code></pre>`;
+    return `<pre class="hljs"><code>${escapeHtml(str)}</code></pre>`;
   },
 })
   // Auto-generate heading anchors for deep linking
@@ -102,6 +114,7 @@ export function extractHeadings(content: string): Array<{
 }> {
   const tokens = md.parse(content, {});
   const headings: Array<{ level: number; text: string; id: string }> = [];
+  const usedIds = new Set<string>();
 
   for (let i = 0; i < tokens.length; i++) {
     if (tokens[i].type === "heading_open") {
@@ -114,7 +127,16 @@ export function extractHeadings(content: string): Array<{
         .replace(/[^\w\s-]/g, "")
         .replace(/\s+/g, "-");
 
-      headings.push({ level, text, id });
+      // Ensure unique id
+      let uniqueId = id;
+      let counter = 1;
+      while (usedIds.has(uniqueId)) {
+        uniqueId = `${id}-${counter}`;
+        counter++;
+      }
+      usedIds.add(uniqueId);
+
+      headings.push({ level, text, id: uniqueId });
     }
   }
 

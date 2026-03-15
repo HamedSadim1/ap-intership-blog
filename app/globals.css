@@ -32,6 +32,13 @@
 html {
   overflow-y: scroll;
   scrollbar-gutter: stable;
+  /* Voorkom witte flits door directe achtergrondkleur op root element */
+  background: linear-gradient(
+    to bottom right,
+    rgb(59 130 246),
+    rgb(168 85 247),
+    rgb(236 72 153)
+  );
 }
 
 /**

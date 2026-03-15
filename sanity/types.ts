@@ -12,7 +12,7 @@
  * ---------------------------------------------------------------------------------
  */
 
-// Source: sanity\extract.json
+// Source: sanity/extract.json
 export type Tag = {
   _id: string;
   _type: "tag";
@@ -283,13 +283,7 @@ export type AllSanitySchemaTypes =
 
 export declare const internalGroqTypeReferenceTo: unique symbol;
 
-type ArrayOf<T> = Array<
-  T & {
-    _key: string;
-  }
->;
-
-// Source: sanity\lib\queries.ts
+// Source: sanity/lib/queries.ts
 // Variable: allPostsQuery
 // Query: *[_type == "post" && status == "published" && select(    defined($tag) => $tag in tags[]->slug.current,    true  )] | order(published_at desc) {  _id,  title,  slug,  excerpt,  featured_image,  status,  is_featured,  published_at  ,  author-> {    _id,    username,    slug,    image,  },  tags[]-> {    _id,    name,    slug,  },}
 export type AllPostsQueryResult = Array<{
@@ -326,7 +320,7 @@ export type AllPostsQueryResult = Array<{
   }> | null;
 }>;
 
-// Source: sanity\lib\queries.ts
+// Source: sanity/lib/queries.ts
 // Variable: postBySlugQuery
 // Query: *[_type == "post" && slug.current == $slug && status == "published"][0] {  _id,  title,  slug,  excerpt,  body,  featured_image,  status,  is_featured,  published_at,  author-> {    _id,    username,    slug,    image,},  tags[]-> {    _id,    name,    slug,},}
 export type PostBySlugQueryResult = {
@@ -364,7 +358,7 @@ export type PostBySlugQueryResult = {
   }> | null;
 } | null;
 
-// Source: sanity\lib\queries.ts
+// Source: sanity/lib/queries.ts
 // Variable: allTagsQuery
 // Query: *[_type == "tag"] | order(name asc) {  _id,  name,  slug,}
 export type AllTagsQueryResult = Array<{
