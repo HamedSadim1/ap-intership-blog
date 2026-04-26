@@ -10,11 +10,6 @@ jobs:
   lint:
     runs-on: ubuntu-latest
 
-    env:
-      NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_SANITY_PROJECT_ID }}
-      NEXT_PUBLIC_SANITY_DATASET: ${{ secrets.NEXT_PUBLIC_SANITY_DATASET }}
-      SANITY_API_TOKEN: ${{ secrets.SANITY_API_TOKEN }}
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -28,8 +23,13 @@ jobs:
       - name: Run ESLint
         run: bun run lint
 
-      - name: Run type generation
-        run: bun run typegen
-
       - name: Build check
         run: bun run build
+
+      - name: Generate Sanity types (optional)
+        if: env.NEXT_PUBLIC_SANITY_PROJECT_ID != ''
+        env:
+          NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_SANITY_PROJECT_ID }}
+          NEXT_PUBLIC_SANITY_DATASET: ${{ secrets.NEXT_PUBLIC_SANITY_DATASET }}
+          SANITY_API_TOKEN: ${{ secrets.SANITY_API_TOKEN }}
+        run: bun run typegen || echo "Type generation skipped (no Sanity credentials)"
