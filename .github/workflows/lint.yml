@@ -10,26 +10,43 @@ jobs:
   lint:
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: read
+      pull-requests: write
+
     steps:
-      - name: Checkout code
+      - name: Checkout
         run: |
-          git clone --depth 1 https://${{ github.token }}@github.com/${{ github.repository }}.git .
-          git fetch origin ${{ github.head_ref }}:${{ github.head_ref }}
-          git checkout ${{ github.head_ref }}
+          mkdir -p /tmp/repo
+          cd /tmp/repo
+          git init
+          git remote add origin https://github.com/${{ github.repository }}.git
+          git fetch origin ${{ github.event.pull_request.head.ref }} --depth=1
+          git checkout FETCH_HEAD
+          cp -r . ${{ github.workspace }}
 
       - name: Setup Bun
         run: |
           curl -fsSL https://bun.sh/install | bash
-          echo "$HOME/.bun/bin" >> $GITHUB_PATH
+          export PATH="/root/.bun/bin:$PATH"
+          bun --version
 
       - name: Install dependencies
-        run: bun install --frozen-lockfile
+        run: |
+          export PATH="/root/.bun/bin:$PATH"
+          bun install --frozen-lockfile
 
       - name: Run ESLint
-        run: bun run lint || true
+        run: |
+          export PATH="/root/.bun/bin:$PATH"
+          bun run lint || echo "Linting issues found"
 
       - name: Run type generation
-        run: bun run typegen || true
+        run: |
+          export PATH="/root/.bun/bin:$PATH"
+          bun run typegen || echo "Type generation issues found"
 
       - name: Build check
-        run: bun run build || true
+        run: |
+          export PATH="/root/.bun/bin:$PATH"
+          bun run build || echo "Build issues found"
