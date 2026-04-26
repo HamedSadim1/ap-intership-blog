@@ -64,7 +64,7 @@ export default function NotFound() {
 
             {/* Snelle links */}
             <div className="mt-10">
-              <p className="text-sm text-gray-300 mb-4">Populaire pagina's:</p>
+              <p className="text-sm text-gray-300 mb-4">Populaire pagina&apos;s:</p>
               <div className="flex flex-wrap gap-3 justify-center">
                 <Link
                   href="/"
