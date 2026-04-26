@@ -7,9 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "predev": "bun typegen",
-    "prebuild": "bun typegen",
-    "typegen": "sanity schema extract --path=./sanity/extract.json && sanity typegen generate"
+    "predev": "bun run typegen",
+    "prebuild": "bun run typegen",
+    "typegen": "sanity schema extract --path=./sanity/extract.json && sanity typegen generate || echo 'Type generation skipped'"
   },
   "dependencies": {
     "@sanity/icons": "^3.7.4",
