@@ -1,0 +1,13 @@
+{
+  "git": {
+    "deploymentEnabled": {
+      "main": true,
+      "*": true
+    }
+  },
+  "env": [
+    "NEXT_PUBLIC_SANITY_PROJECT_ID",
+    "NEXT_PUBLIC_SANITY_DATASET",
+    "SANITY_API_TOKEN"
+  ]
+}
