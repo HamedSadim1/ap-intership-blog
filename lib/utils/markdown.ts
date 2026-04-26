@@ -2,9 +2,7 @@ import "server-only";
 
 import MarkdownIt from "markdown-it";
 import hljs from "highlight.js";
-// @ts-expect-error - Some packages don't have proper TS types
 import markdownItAnchor from "markdown-it-anchor";
-// @ts-expect-error - markdown-it-container lacks TypeScript definitions
 import markdownItContainer from "markdown-it-container";
 
 /**
