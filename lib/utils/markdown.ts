@@ -2,7 +2,9 @@ import "server-only";
 
 import MarkdownIt from "markdown-it";
 import hljs from "highlight.js";
+// @ts-ignore - Some packages don't have proper TS types
 import markdownItAnchor from "markdown-it-anchor";
+// @ts-ignore
 import markdownItContainer from "markdown-it-container";
 
 /**
@@ -56,7 +58,7 @@ export const md = new MarkdownIt({
   })
   // Success container
   .use(markdownItContainer, "success", {
-    render: function (tokens: Array<{ nesting: number }>, idx: number) {
+    render: function (tokens: any[], idx: number) {
       if (tokens[idx].nesting === 1) {
         return '<div class="callout callout-success">\n';
       } else {
@@ -66,7 +68,7 @@ export const md = new MarkdownIt({
   })
   // Warning container
   .use(markdownItContainer, "warning", {
-    render: function (tokens: Array<{ nesting: number }>, idx: number) {
+    render: function (tokens: any[], idx: number) {
       if (tokens[idx].nesting === 1) {
         return '<div class="callout callout-warning">\n';
       } else {
@@ -76,7 +78,7 @@ export const md = new MarkdownIt({
   })
   // Info container
   .use(markdownItContainer, "info", {
-    render: function (tokens: Array<{ nesting: number }>, idx: number) {
+    render: function (tokens: any[], idx: number) {
       if (tokens[idx].nesting === 1) {
         return '<div class="callout callout-info">\n';
       } else {
@@ -86,7 +88,7 @@ export const md = new MarkdownIt({
   })
   // Danger container
   .use(markdownItContainer, "danger", {
-    render: function (tokens: Array<{ nesting: number }>, idx: number) {
+    render: function (tokens: any[], idx: number) {
       if (tokens[idx].nesting === 1) {
         return '<div class="callout callout-danger">\n';
       } else {

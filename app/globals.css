@@ -56,19 +56,18 @@ html {
 
 /* Het "track" gebied waar de thumb in scrollt */
 ::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.3); /* Donker semi-transparant voor contrast */
+  background: transparent; /* Volledig transparant, laat gradient achtergrond zien */
 }
 
 /* De scrollbare "thumb" (het deel dat je sleept) */
 ::-webkit-scrollbar-thumb {
-  background: rgb(168, 85, 247); /* Paars uit gradient - sluit aan bij design */
+  background: rgba(255, 255, 255, 0.2); /* Semi-transparant wit (20% opacity) */
   border-radius: 4px; /* Afgeronde hoeken voor moderne look */
 }
 
-/* Thumb hover state - wordt helderder bij hover */
+/* Thumb hover state - wordt lichter bij hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: rgb(168, 85, 247);
-  filter: brightness(1.3); /* Helderder effect bij hover */
+  background: rgba(255, 255, 255, 0.3); /* Verhoog opacity naar 30% bij hover */
 }
 
 /**
@@ -79,7 +78,7 @@ html {
  */
 * {
   scrollbar-width: thin; /* 'auto' | 'thin' | 'none' - thin = slankere scrollbar */
-  scrollbar-color: rgb(168, 85, 247) transparent; /* thumb-color track-color - paars voor Firefox */
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent; /* thumb-color track-color */
 }
 
 body {

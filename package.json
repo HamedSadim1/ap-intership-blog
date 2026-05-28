@@ -7,9 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "predev": "bun run typegen",
-    "prebuild": "bun run typegen",
-    "typegen": "sanity schema extract --path=./sanity/extract.json && sanity typegen generate || echo 'Type generation skipped'"
+    "predev": "bun typegen",
+    "prebuild": "bun typegen",
+    "typegen": "sanity schema extract --path=./sanity/extract.json && sanity typegen generate"
   },
   "dependencies": {
     "@sanity/icons": "^3.7.4",
@@ -17,7 +17,6 @@
     "@sanity/vision": "^5.7.0",
     "@tailwindcss/typography": "^0.5.19",
     "@types/markdown-it": "^14.1.2",
-    "@types/markdown-it-container": "^4.0.0",
     "highlight.js": "^11.11.1",
     "markdown-it": "^14.1.0",
     "markdown-it-anchor": "^9.2.0",
