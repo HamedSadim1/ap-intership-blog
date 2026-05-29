@@ -20,6 +20,8 @@ import { client } from "@/sanity/lib/client";
  *
  * @see https://nextjs.org/docs/app/api-reference/file-conventions/metadata/sitemap
  */
+import { projectId } from "@/sanity/env";
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // ============================================================
   // Statische routes
@@ -50,26 +52,32 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Dynamische blog post routes
   // ============================================================
 
-  interface SitemapPost {
-    slug: string | null;
-    _updatedAt: string;
+  let blogRoutes: MetadataRoute.Sitemap = [];
+
+  // Skip Sanity query als credentials niet geconfigureerd zijn (bv. lokale dev zonder .env)
+  // Dit voorkomt build failures in omgevingen zonder Sanity toegang
+  if (projectId !== "placeholder") {
+    interface SitemapPost {
+      slug: string | null;
+      _updatedAt: string;
+    }
+
+    const posts: SitemapPost[] = await client.fetch(
+      `*[_type == "post" && status == "published" && defined(slug.current)] | order(published_at desc) {
+        "slug": slug.current,
+        _updatedAt,
+      }`,
+    );
+
+    blogRoutes = posts
+      .filter((post): post is SitemapPost & { slug: string } => post.slug !== null)
+      .map((post) => ({
+        url: `${SITE_URL}/blog/${post.slug}`,
+        lastModified: new Date(post._updatedAt),
+        changeFrequency: "monthly" as const,
+        priority: 0.8,
+      }));
   }
-
-  const posts: SitemapPost[] = await client.fetch(
-    `*[_type == "post" && status == "published" && defined(slug.current)] | order(published_at desc) {
-      "slug": slug.current,
-      _updatedAt,
-    }`,
-  );
-
-  const blogRoutes: MetadataRoute.Sitemap = posts
-    .filter((post): post is SitemapPost & { slug: string } => post.slug !== null)
-    .map((post) => ({
-      url: `${SITE_URL}/blog/${post.slug}`,
-      lastModified: new Date(post._updatedAt),
-      changeFrequency: "monthly" as const,
-      priority: 0.8,
-    }));
 
   return [...staticRoutes, ...blogRoutes];
 }
