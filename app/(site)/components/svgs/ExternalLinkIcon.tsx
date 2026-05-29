@@ -1,14 +1,16 @@
-/**
- * Gedeelde props interface voor alle icoon componenten
- * @property className - Tailwind classes voor grootte, kleur, etc.
- */
 interface IconProps {
+  /** Tailwind classes voor grootte, kleur, etc. */
   className?: string;
 }
 
 /**
- * ExternalLinkIcon - Externe link icoon (pijl naar buiten)
- * Geeft aan dat een link naar een externe website leidt
+ * ExternalLinkIcon — Externe link (pijl naar buiten)
+ *
+ * Geeft visueel aan dat een link naar een externe website leidt.
+ * Gebruikt in ExternalLink en InfoCard componenten.
+ *
+ * @param className - Tailwind classes voor grootte, kleur (default: geen)
+ * @returns SVG element
  *
  * @example
  * <ExternalLinkIcon className="w-4 h-4 text-cyan-300" />

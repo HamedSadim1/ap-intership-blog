@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import { GLASS_CLASSES, ROUNDED_CLASSES, cn } from "@/lib/utils/styles";
 
 /**
  * Props voor Section component
@@ -14,34 +15,30 @@ interface SectionProps {
 
 /** Styling per section variant */
 const variantStyles = {
-  glass: "bg-white/10 backdrop-blur-sm",
+  glass: GLASS_CLASSES.light,
   solid: "bg-white/20",
   ghost: "bg-transparent",
 };
 
 /**
- * Section - Herbruikbare sectie container met glassmorphism effect
+ * Section — Herbruikbare sectie container met glass varianten
  *
- * Consistent gestructureerde sectie voor content blokken met verschillende stijl varianten.
- * Gebruikt glassmorphism design pattern met blur effect en semi-transparante achtergrond.
+ * Drie varianten: glass (semi-transparant), solid (meer dekkend) en ghost (transparant).
+ * Consistent padding en rounded via shared style utilities.
+ *
+ * @param children - Inhoud van de sectie
+ * @param variant - Stijl variant (default: "glass")
+ * @param className - Extra Tailwind classes (optioneel)
  *
  * @example
  * // Standaard glassmorphism sectie
  * <Section>
  *   <h2>Titel</h2>
- *   <p>Content...</p>
  * </Section>
  *
  * @example
- * // Solide variant
- * <Section variant="solid">
- *   <div>Meer opvallende content</div>
- * </Section>
- *
- * @example
- * // Met custom classes
- * <Section className="mb-12">
- *   <p>Extra margin bottom</p>
+ * <Section variant="solid" className="mb-12">
+ *   <p>Content</p>
  * </Section>
  */
 const Section = ({
@@ -51,7 +48,7 @@ const Section = ({
 }: SectionProps) => {
   return (
     <section
-      className={`${variantStyles[variant]} rounded-2xl p-6 md:p-8 ${className}`}
+      className={cn(variantStyles[variant], ROUNDED_CLASSES.lg, "p-6 md:p-8", className)}
     >
       {children}
     </section>

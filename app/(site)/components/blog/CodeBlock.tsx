@@ -32,6 +32,15 @@ export function CodeBlockEnhancer({ slug }: CodeBlockEnhancerProps) {
   return null;
 }
 
+/**
+ * handleCopy — Copy code block content to clipboard
+ *
+ * Zoekt het `<code>` element binnen de `<pre>`, kopieert de tekst
+ * en toont een tijdelijke statusmelding op de knop.
+ *
+ * @param button - De geklikte kopieer-knop
+ * @returns void
+ */
 function handleCopy(button: HTMLButtonElement) {
   const pre = button.closest("pre");
   if (!pre) return;

@@ -1,14 +1,15 @@
-/**
- * Gedeelde props interface voor alle icoon componenten
- * @property className - Tailwind classes voor grootte, kleur, etc.
- */
 interface IconProps {
+  /** Tailwind classes voor grootte, kleur, etc. */
   className?: string;
 }
 
 /**
- * ArrowLeftIcon - Pijl naar links icoon
- * Vaak gebruikt voor terug navigatie
+ * ArrowLeftIcon — Pijl naar links
+ *
+ * Gebruikt voor terug-navigatie (bv. "Terug naar blogs" link).
+ *
+ * @param className - Tailwind classes voor grootte, kleur (default: geen)
+ * @returns SVG element
  *
  * @example
  * <ArrowLeftIcon className="w-5 h-5 text-white" />

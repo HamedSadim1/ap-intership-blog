@@ -1,14 +1,15 @@
-/**
- * Gedeelde props interface voor alle icoon componenten
- * @property className - Tailwind classes voor grootte, kleur, etc.
- */
 interface IconProps {
+  /** Tailwind classes voor grootte, kleur, etc. */
   className?: string;
 }
 
 /**
- * CloseIcon - Sluit/kruis icoon (X)
- * Gebruikt voor het sluiten van modals, menus, etc.
+ * CloseIcon — Sluit/kruis icoon (X)
+ *
+ * Gebruikt in MobileMenuButton om het menu te sluiten.
+ *
+ * @param className - Tailwind classes voor grootte, kleur (default: geen)
+ * @returns SVG element
  *
  * @example
  * <CloseIcon className="w-6 h-6 text-white" />

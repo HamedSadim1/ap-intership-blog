@@ -7,10 +7,12 @@
  *   <Divider />
  * </div>
  */
+import { GRADIENTS } from "@/lib/utils/styles";
+
 const Divider = () => {
   return (
     // Gradient lijn: transparant -> wit -> transparant
-    <div className="w-full h-px bg-linear-to-r from-transparent via-white/30 to-transparent" />
+    <div className={`w-full h-px ${GRADIENTS.divider}`} />
   );
 };
 

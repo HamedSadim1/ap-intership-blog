@@ -1,7 +1,19 @@
 interface HomeIconProps {
+  /** Tailwind classes voor grootte, kleur, etc. (default: "w-6 h-6") */
   className?: string;
 }
 
+/**
+ * HomeIcon — Huis
+ *
+ * Gebruikt in de navigatie voor de homepage link en in NotFoundActions.
+ *
+ * @param className - Tailwind classes (default: "w-6 h-6")
+ * @returns SVG element
+ *
+ * @example
+ * <HomeIcon className="w-5 h-5" />
+ */
 const HomeIcon = ({ className = "w-6 h-6" }: HomeIconProps) => {
   return (
     <svg

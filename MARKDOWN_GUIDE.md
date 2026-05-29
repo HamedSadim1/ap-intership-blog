@@ -1,33 +1,45 @@
 # 📝 Markdown Features Gids
 
-Dit document laat zien hoe je alle verbeterde markdown features gebruikt in je blog posts.
+Deze gids laat zien hoe je alle Markdown-features gebruikt in je blog posts via Sanity CMS.
 
-## ✨ Nieuwe Features
+---
 
-### 1. **Tabellen**
+## 📑 Table of Contents (TOC)
+
+De TOC wordt **automatisch gegenereerd** op basis van je headings (H2, H3, H4) in de blog post.
+
+**Features:**
+- ✅ Sticky sidebar op desktop (blijft zichtbaar tijdens scrollen)
+- ✅ Active heading highlighting via IntersectionObserver
+- ✅ Smooth scroll naar sectie
+- ✅ Automatisch — geen extra actie nodig
+
+---
+
+## 📊 Tabellen
 
 Maak professionele tabellen met automatische styling:
 
 ```markdown
-| Feature | Before  | After      |
-| ------- | ------- | ---------- |
-| LCP     | 32.66s  | 2.62s      |
-| Cache   | ❌ Geen | ✅ ISR 60s |
+| Feature          | Voor    | Na      |
+| ---------------- | ------- | ------- |
+| LCP              | 32.66s  | 2.62s   |
+| Cache            | ❌ Geen | ✅ ISR  |
 ```
 
 **Voorbeeld:**
-| Situatie | LCP | Cache |
-|----------|-----|-------|
-| Origineel | 32.66s | ❌ Geen |
-| Geoptimaliseerd | 2.62s | ✅ 60s |
+| Situatie          | LCP    | Cache     |
+| ----------------- | ------ | --------- |
+| Origineel         | 32.66s | ❌ Geen   |
+| Geoptimaliseerd   | 2.62s  | ✅ 60s    |
 
 ---
 
-### 2. **Callout Boxes**
+## 💬 Callout Boxes
 
 Gebruik containers voor belangrijke informatie:
 
-#### Success (Groen)
+### Success (Groen)
 
 ```markdown
 ::: success
@@ -36,7 +48,7 @@ Server-side rendering heeft enorme voordelen.
 :::
 ```
 
-#### Warning (Geel)
+### Warning (Geel)
 
 ```markdown
 ::: warning
@@ -44,7 +56,7 @@ Server-side rendering heeft enorme voordelen.
 :::
 ```
 
-#### Info (Blauw)
+### Info (Blauw)
 
 ```markdown
 ::: info
@@ -52,7 +64,7 @@ Server-side rendering heeft enorme voordelen.
 :::
 ```
 
-#### Danger (Rood)
+### Danger (Rood)
 
 ```markdown
 ::: danger
@@ -62,26 +74,13 @@ Server-side rendering heeft enorme voordelen.
 
 ---
 
-### 3. **Emoji Support**
-
-Gebruik emoji shortcuts:
-
-```markdown
-:smile: :heart: :rocket: :fire: :tada:
-```
-
-Wordt: 😄 ❤️ 🚀 🔥 🎉
-
----
-
-### 4. **Code Blocks met Syntax Highlighting**
+## 🎨 Code Blocks met Syntax Highlighting
 
 Code blocks krijgen automatisch:
 
-- ✅ Syntax highlighting (TypeScript, JavaScript, Python, etc.)
-- ✅ Copy button (rechtsboven)
-- ✅ Line numbers
-- ✅ Mooie styling
+- ✅ **Syntax highlighting** voor 180+ talen via highlight.js
+- ✅ **Copy button** (rechtsboven — klik om te kopiëren)
+- ✅ Donker thema (github-dark)
 
 ```typescript
 export async function getServerData() {
@@ -90,9 +89,17 @@ export async function getServerData() {
 }
 ```
 
+**Taal specificeren:** Zet de taalnaam achter de opening backticks:
+- ` ```typescript ` — TypeScript
+- ` ```javascript ` — JavaScript
+- ` ```python ` — Python
+- ` ```bash ` — Terminal commands
+- ` ```css ` — CSS
+- ` ```html ` — HTML/JSX
+
 ---
 
-### 5. **Heading Anchors**
+## 🔗 Heading Anchors
 
 Alle headings krijgen automatisch een anchor link voor deep linking:
 
@@ -100,28 +107,13 @@ Alle headings krijgen automatisch een anchor link voor deep linking:
 ## Mijn Heading
 ```
 
-De URL wordt: `#mijn-heading` (klikbaar voor directe navigatie)
+Wordt: `#mijn-heading` — direct linkbaar en zichtbaar bij hover.
 
 ---
 
-### 6. **Table of Contents (TOC)**
+## 📈 Reading Progress Bar
 
-De TOC wordt automatisch gegenereerd op basis van je headings (H2, H3, H4).
-
-**Features:**
-
-- ✅ Sticky sidebar (blijft zichtbaar tijdens scrollen)
-- ✅ Active heading highlighting
-- ✅ Smooth scroll naar sectie
-- ✅ Automatisch gegenereerd
-
-Je hoeft niks te doen - werkt automatisch!
-
----
-
-### 7. **Reading Progress Bar**
-
-Een progress bar bovenaan de pagina toont hoeveel van het artikel je hebt gelezen.
+Een **progress bar** bovenaan de pagina toont in real-time hoeveel van het artikel je hebt gelezen. Automatisch, geen actie nodig.
 
 ---
 
@@ -129,12 +121,12 @@ Een progress bar bovenaan de pagina toont hoeveel van het artikel je hebt geleze
 
 ### Inline Code
 
-Gebruik backticks voor inline code: \`const name = "value"\`
+Gebruik backticks voor inline code: `` `const name = "value"` ``
 
 ### Block Quotes
 
 ```markdown
-> Dit is een quote. Gebruik het voor citaten of belangrijke opmerkingen.
+> Dit is een quote. Gebruik dit voor citaten of belangrijke opmerkingen.
 ```
 
 ### Lijsten
@@ -146,7 +138,7 @@ Gebruik backticks voor inline code: \`const name = "value"\`
   - Another nested
 ```
 
-### Numbered Lists
+### Genummerde Lijsten
 
 ```markdown
 1. Eerste stap
@@ -156,45 +148,44 @@ Gebruik backticks voor inline code: \`const name = "value"\`
 
 ---
 
-## 📊 Volledige Voorbeeld Blog Post
+## 📝 Volledige Voorbeeld Blog Post
 
 ```markdown
-# Mijn Eerste Week als Full Stack Developer
+# Mijn Eerste Week als Stagiair
 
 ## De Eerste Dag
 
 ::: info
-💡 Tip: Begin altijd met een goede onboarding!
+💡 **Tip:** Begin altijd met een goede onboarding!
 :::
 
 Wat me meteen opviel is hoe modern de tech stack is:
 
-- **GitHub** voor version control
-- **Notion** voor task management
-- **Next.js** + **Prisma** + **TypeScript**
+- **Next.js 16** voor het framework
+- **Sanity CMS** voor content management
+- **Tailwind CSS 4** voor styling
 
 ## Performance Optimalisatie
 
 ::: success
-✅ **Resultaat:** Van 32s naar 100ms - een verbetering van 92%!
+✅ **Resultaat:** Van 32s naar 100ms — een verbetering van 92%!
 :::
 
 ### De Code
 
-\`\`\`typescript
-export default async function Page({ searchParams }) {
-const { brandId } = await searchParams;
-const data = await getData(brandId);
-return <Component data={data} />;
+```typescript
+export default async function Page() {
+  const data = await getData();
+  return <Component data={data} />;
 }
-\`\`\`
+```
 
 ### Resultaten
 
-| Metric | Voor   | Na    |
-| ------ | ------ | ----- |
-| LCP    | 32.66s | 2.62s |
-| Cache  | ❌     | ✅    |
+| Metric | Voor   | Na     |
+| ------ | ------ | ------ |
+| LCP    | 32.66s | 2.62s  |
+| Cache  | ❌     | ✅     |
 
 ::: warning
 ⚠️ **Belangrijk:** Test altijd je performance verbeteringen!
@@ -202,18 +193,18 @@ return <Component data={data} />;
 
 ## Conclusie
 
-Wat een geweldige week! :tada: :rocket:
+Wat een geweldige week!
 ```
 
 ---
 
 ## 🚀 Best Practices
 
-1. **Gebruik headings hierarchisch** - Begin met H2, dan H3, dan H4
-2. **Gebruik callouts spaarzaam** - Te veel kan afleiden
-3. **Voeg taal toe aan code blocks** - \`\`\`typescript voor syntax highlighting
-4. **Maak tabellen responsive** - Hou kolommen beperkt voor mobiel
-5. **Gebruik emoji's met mate** - Voegt persoonlijkheid toe maar overdrijf niet
+1. **Gebruik headings hiërarchisch** — Begin met H2, dan H3, dan H4
+2. **Gebruik callouts spaarzaam** — Te veel kan afleiden
+3. **Voeg taal toe aan code blocks** — ` ```typescript ` voor syntax highlighting
+4. **Maak tabellen overzichtelijk** — Hou kolommen beperkt voor mobiel
+5. **Gebruik emoji** — via kopiëren/plakken voor betere compatibiliteit
 
 ---
 
@@ -221,18 +212,23 @@ Wat een geweldige week! :tada: :rocket:
 
 ### Gebruikte Packages
 
-- `markdown-it` - Core markdown parser
-- `markdown-it-anchor` - Heading anchors
-- `markdown-it-container` - Custom containers/callouts
-- `markdown-it-emoji` - Emoji support
-- `markdown-it-attrs` - HTML attributes
-- `highlight.js` - Syntax highlighting
+| Package                    | Doel                                       |
+| -------------------------- | ------------------------------------------ |
+| `markdown-it`              | Core markdown parser                       |
+| `markdown-it-anchor`       | Automatische heading anchors voor TOC      |
+| `markdown-it-container`    | Custom containers voor callout boxes       |
+| `highlight.js`             | Syntax highlighting voor code blokken      |
 
-### Custom Components
+### Custom Componenten
 
-- `TableOfContents` - Auto-generated TOC
-- `CodeBlockEnhancer` - Adds copy buttons
-- `ReadingProgress` - Progress bar
+| Component              | Functie                                   |
+| ---------------------- | ----------------------------------------- |
+| `TableOfContents`      | Automatisch gegenereerde TOC (desktop)    |
+| `MobileTocToggle`      | Inklapbare TOC voor mobiel                |
+| `CodeBlockEnhancer`    | Voegt copy-knoppen toe aan code blokken   |
+| `ReadingProgress`      | Real-time leesvoortgangsbalk              |
+| `PostHeader`           | Hero-sectie met featured image & metadata |
+| `RelatedPostsSection`  | Gerelateerde posts o.b.v. gedeelde tags   |
 
 ---
 

@@ -51,7 +51,7 @@ export function TableOfContents({ headings, readingTime }: TableOfContentsProps)
 
   return (
     <nav className="toc">
-      <div className="backdrop-blur-md bg-white/10 rounded-xl p-6 border border-white/20 shadow-xl">
+      <div className="bg-white/15 rounded-xl p-6 border border-white/20 shadow-xl">
         <div className="flex items-center gap-2 mb-5 pb-3 border-b border-white/20">
           <span className="text-xl">📑</span>
           <h3 className="text-base font-bold text-white uppercase tracking-wide">

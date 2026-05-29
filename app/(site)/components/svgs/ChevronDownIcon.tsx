@@ -1,7 +1,19 @@
 interface ChevronDownIconProps {
+  /** Tailwind classes voor grootte, kleur, etc. (default: "w-4 h-4") */
   className?: string;
 }
 
+/**
+ * ChevronDownIcon — Pijltje omlaag
+ *
+ * Gebruikt in MobileTocToggle voor collapsible toggle.
+ *
+ * @param className - Tailwind classes (default: "w-4 h-4")
+ * @returns SVG element
+ *
+ * @example
+ * <ChevronDownIcon className="w-4 h-4 transition-transform group-open:rotate-180" />
+ */
 const ChevronDownIcon = ({ className = "w-4 h-4" }: ChevronDownIconProps) => {
   return (
     <svg

@@ -1,14 +1,15 @@
-/**
- * Gedeelde props interface voor alle icoon componenten
- * @property className - Tailwind classes voor grootte, kleur, etc.
- */
 interface IconProps {
+  /** Tailwind classes voor grootte, kleur, etc. */
   className?: string;
 }
 
 /**
- * BuildingIcon - Kantoorgebouw/bedrijf icoon
- * Gebruikt voor het weergeven van locaties, bedrijven of stageplaatsen
+ * BuildingIcon — Kantoorgebouw / bedrijf
+ *
+ * Gebruikt op de About pagina voor de stageplaats-sectie.
+ *
+ * @param className - Tailwind classes voor grootte, kleur (default: geen)
+ * @returns SVG element
  *
  * @example
  * <BuildingIcon className="w-6 h-6 text-yellow-300" />

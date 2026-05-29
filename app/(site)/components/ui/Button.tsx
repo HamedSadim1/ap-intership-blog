@@ -27,7 +27,7 @@ interface ButtonProps {
 /** Styling per button variant */
 const variantStyles: Record<ButtonVariant, string> = {
   primary:
-    "bg-white text-purple-600 hover:bg-white/90 hover:shadow-lg hover:shadow-white/25",
+    "bg-purple-500/20 text-white border border-purple-400/30 hover:bg-purple-500/30 hover:border-purple-400/50 hover:shadow-lg hover:shadow-purple-500/20",
   secondary: "bg-white/10 text-white border border-white/30 hover:bg-white/20",
   ghost: "text-cyan-300 hover:text-cyan-200",
 };
@@ -63,7 +63,7 @@ const Button = ({
 }: ButtonProps) => {
   // Basis styling die voor alle varianten geldt
   const baseStyles =
-    "group inline-flex items-center justify-center gap-2 px-8 py-4 font-semibold rounded-2xl transition-[transform,background-color] duration-200 ease-[var(--ease-out)] hover:scale-105 active:scale-[0.97] cursor-pointer";
+    "group inline-flex items-center justify-center gap-2 px-8 py-4 font-semibold rounded-2xl transition-[transform,background-color] duration-200 ease-out hover:scale-105 active:scale-[0.97] cursor-pointer";
 
   const combinedStyles = `${baseStyles} ${variantStyles[variant]} ${className}`;
 

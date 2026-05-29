@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { navbarConfig, NavItem } from "../data";
 import { NavLink, NavBrand, MobileMenuButton } from "./ui";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
@@ -17,17 +17,15 @@ interface NavbarProps {
   className?: string;
 }
 
-/** Scroll threshold in pixels voor glass overgang */
-const SCROLL_THRESHOLD = 10;
-
 /**
- * Navbar - Glasmorphism navigatiebalk met shadcn/ui Sheet voor mobiel menu
+ * Navbar - Navigatiebalk met shadcn/ui Sheet voor mobiel menu
+ *
+ * Bewust statisch (geen scroll-state) om flicker door backdrop-filter te voorkomen.
+ * Gebruikt will-change: transform voor GPU compositor layer.
  *
  * Features:
- * - Scroll-aware: wordt opaquer met schaduw bij scrollen
- * - Glass effect passend bij het thema
+ * - Glass effect met transparante achtergrond (geen backdrop-blur — veroorzaakt scroll flicker)
  * - shadcn/ui Sheet voor mobiel menu (scroll lock, Escape key, focus trapping inbegrepen)
- * - Fade-in animatie op initial load
  * - Volledig configureerbaar via props of data file
  */
 const Navbar = ({
@@ -36,29 +34,15 @@ const Navbar = ({
   className = "",
 }: NavbarProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
-
-  // Scroll detection — voegt shadow/opacity toe zodra gebruiker scrolt
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > SCROLL_THRESHOLD);
-    };
-    handleScroll();
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   return (
     <nav
-      className={`relative z-50 px-4 transition-all duration-500 ease-out ${className}`}
+      className={`relative z-50 px-4 ${className}`}
+      style={{ willChange: "transform" }}
     >
-      <div className="max-w-6xl mx-auto animate-fade-in">
+      <div className="max-w-6xl mx-auto">
         <div
-          className={`backdrop-blur-xl border border-white/20 rounded-2xl px-6 transition-all duration-500 ease-out ${
-            isScrolled
-              ? "bg-white/20 shadow-2xl shadow-black/20 py-3"
-              : "bg-white/10 shadow-lg py-4"
-          }`}
+          className="border border-white/20 rounded-2xl px-6 bg-white/15 shadow-lg py-4"
         >
           <div className="flex items-center justify-between">
             {/* Logo/Brand */}
@@ -84,7 +68,7 @@ const Navbar = ({
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
         <SheetContent
           side="right"
-          className="w-70 max-w-[85vw] border-l border-white/20 bg-white/10 backdrop-blur-2xl text-white p-6 pt-16"
+          className="w-70 max-w-[85vw] border-l border-white/20 bg-linear-to-br from-blue-500 via-purple-500 to-pink-500 text-white p-6 pt-16"
         >
           <nav className="flex flex-col gap-3 mt-4">
             {items.map((item) => (

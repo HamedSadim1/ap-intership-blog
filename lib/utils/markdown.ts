@@ -4,18 +4,7 @@ import MarkdownIt from "markdown-it";
 import hljs from "highlight.js";
 import markdownItAnchor from "markdown-it-anchor";
 import markdownItContainer from "markdown-it-container";
-
-/**
- * Simple HTML escape function
- */
-function escapeHtml(text: string): string {
-  return text
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-}
+import { escapeHtml, slugify } from "@/lib/utils/string";
 
 /**
  * Configure markdown-it with extensive plugins for rich content
@@ -47,12 +36,7 @@ export const md = new MarkdownIt({
       placement: "before",
       class: "heading-anchor",
     }),
-    slugify: (s: string) =>
-      s
-        .toLowerCase()
-        .trim()
-        .replace(/[^\w\s-]/g, "")
-        .replace(/\s+/g, "-"),
+    slugify,
   })
   // Success container
   .use(markdownItContainer, "success", {
@@ -97,6 +81,12 @@ export const md = new MarkdownIt({
 
 /**
  * Render markdown string to HTML
+ *
+ * Gebruikt de geconfigureerde markdown-it instance met highlight.js voor
+ * syntax highlighting, heading anchors en custom containers.
+ *
+ * @param content - Markdown string om te renderen
+ * @returns HTML string met volledige opmaak
  */
 export function renderMarkdown(content: string): string {
   return md.render(content || "");
@@ -104,6 +94,12 @@ export function renderMarkdown(content: string): string {
 
 /**
  * Extract headings from markdown for Table of Contents
+ *
+ * Parse markdown tokens om heading-level, tekst en unieke anchor IDs te extraheren.
+ * Duplicate heading IDs krijgen een numeriek suffix (bv. "titel-1", "titel-2").
+ *
+ * @param content - Markdown string om te parsen
+ * @returns Array van heading objecten met level, text en unieke id
  */
 export function extractHeadings(content: string): Array<{
   level: number;
@@ -119,11 +115,7 @@ export function extractHeadings(content: string): Array<{
       const level = parseInt(tokens[i].tag.substring(1));
       const textToken = tokens[i + 1];
       const text = textToken.content;
-      const id = text
-        .toLowerCase()
-        .trim()
-        .replace(/[^\w\s-]/g, "")
-        .replace(/\s+/g, "-");
+      const id = slugify(text);
 
       // Ensure unique id
       let uniqueId = id;

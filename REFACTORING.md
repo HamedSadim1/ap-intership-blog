@@ -1,48 +1,32 @@
-# DRY Refactoring Documentatie
+# Refactoring Documentatie
 
 ## Overzicht
 
-Dit document beschrijft alle refactoring wijzigingen die zijn doorgevoerd om het project te optimaliseren volgens DRY (Don't Repeat Yourself) principes en Next.js best practices.
+Dit document beschrijft de belangrijkste refactoring-wijzigingen die zijn doorgevoerd om de codebase te optimaliseren volgens DRY-principes en Next.js best practices.
 
 ---
 
-## 1. Section Component - Glassmorphism Pattern
+## 1. Section Component — Glassmorphism Pattern
 
-### ❌ Voor (Herhaalde code)
-
-**Bestand:** `app/(site)/about/page.tsx`
+### ❌ Voor (Herhaalde code in about/page.tsx)
 
 ```tsx
-// Herhaald 4 keer in hetzelfde bestand
-<div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 md:p-8">
-  <h2 className="text-2xl md:text-3xl font-bold mb-6">{/* Content */}</h2>
-  {/* Meer content... */}
+// 4× identiek patroon in hetzelfde bestand
+<div className="bg-white/10 rounded-2xl p-6 md:p-8">
+  <h2 className="text-2xl md:text-3xl font-bold mb-6">...</h2>
 </div>
 ```
 
-**Probleem:**
+**Problemen:** 4× duplicatie, moeilijk onderhoudbaar, geen consistentie.
 
-- 4 identieke className patterns
-- Moeilijk te onderhouden (wijziging vereist 4x aanpassen)
-- Geen consistentie garantie
-
-### ✅ Na (Herbruikbare component)
-
-**Nieuw bestand:** `app/(site)/components/ui/Section.tsx`
+### ✅ Na (Herbruikbare Section component)
 
 ```tsx
-import type { ReactNode } from "react";
-
+// app/(site)/components/ui/Section.tsx
 type SectionVariant = "glass" | "solid" | "ghost";
 
-interface SectionProps {
-  children: ReactNode;
-  variant?: SectionVariant;
-  className?: string;
-}
-
 const variantStyles: Record<SectionVariant, string> = {
-  glass: "bg-white/10 backdrop-blur-sm",
+  glass: "bg-white/10",
   solid: "bg-white/5",
   ghost: "bg-transparent",
 };
@@ -53,610 +37,249 @@ export function Section({
   className = "",
 }: SectionProps) {
   return (
-    <section
-      className={`${variantStyles[variant]} rounded-2xl p-6 md:p-8 ${className}`}
-    >
+    <section className={`${variantStyles[variant]} rounded-2xl p-6 md:p-8 ${className}`}>
       {children}
     </section>
   );
 }
 ```
 
-**Gebruik:**
+> **Let op:** `backdrop-blur` is verwijderd uit de Section component om **scroll-flicker** (GPU re-paints) te voorkomen.
 
-```tsx
-import { Section } from "@/app/(site)/components/ui/Section";
-
-export default function AboutPage() {
-  return (
-    <Section>
-      <h2 className="text-2xl md:text-3xl font-bold mb-6">{/* Content */}</h2>
-    </Section>
-  );
-}
-```
-
-**Voordelen:**
-
-- ✅ 1 component, 4+ toepassingen
-- ✅ Varianten voor flexibiliteit (glass, solid, ghost)
-- ✅ Centraal onderhoud
-- ✅ Type-safe met TypeScript
+**Voordelen:** ✅ 1 component, 4+ toepassingen ✅ Varianten (glass, solid, ghost) ✅ Centraal onderhoud
 
 ---
 
-## 2. Data Fetching - Sanity Queries
+## 2. Data Fetching — Gecentraliseerd in lib/sanity.ts
 
-### ❌ Voor (Herhaalde fetch logic)
-
-**Bestand:** `app/(site)/blog/page.tsx`
+### ❌ Voor (Directe sanityFetch in pagina's)
 
 ```tsx
-import { sanityFetch } from "@/sanity/lib/live";
-import { allPostsQuery, allTagsQuery } from "@/sanity/lib/queries";
-
-export default async function BlogPage({ searchParams }: PageProps) {
-  // Query 1: Posts
-  const { data: posts } = await sanityFetch({
-    query: allPostsQuery,
-    params: searchParams.tag
-      ? { tag: searchParams.tag as string }
-      : ({ tag: undefined } as unknown as { tag: undefined }),
-  });
-
-  // Query 2: Tags
-  const { data: tags } = await sanityFetch({
-    query: allTagsQuery,
-  });
-
-  // ... rest van pagina
-}
+// Verspreid over meerdere pagina's
+const { data: posts } = await sanityFetch({ query: allPostsQuery, params: ... });
+const { data: post } = await sanityFetch({ query: postBySlugQuery, params: ... });
 ```
 
-**Bestand:** `app/(site)/blog/[slug]/page.tsx`
+### ✅ Na (Gecentraliseerde functies in lib/sanity.ts)
 
 ```tsx
-import { sanityFetch } from "@/sanity/lib/live";
-import { postBySlugQuery } from "@/sanity/lib/queries";
+// lib/sanity.ts — SSOT voor alle data fetching
+import "server-only";
 
-export default async function PostDetailPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
-  const { slug } = await params;
-
-  // Query 3: Post by slug
-  const { data: post } = await sanityFetch({
-    query: postBySlugQuery,
-    params: { slug },
-  });
-
-  // ... rest van pagina
-}
-```
-
-**Problemen:**
-
-- Herhaalde import statements
-- Herhaalde sanityFetch configuratie
-- Type casting logica gedistribueerd
-- Moeilijk te testen
-
-### ✅ Na (Gecentraliseerde functies)
-
-**Nieuw bestand:** `hooks/useSanity.ts`
-
-```tsx
-import { sanityFetch } from "@/sanity/lib/live";
-import {
-  allPostsQuery,
-  allTagsQuery,
-  postBySlugQuery,
-} from "@/sanity/lib/queries";
-import type {
-  AllPostsQueryResult,
-  AllTagsQueryResult,
-  PostBySlugQueryResult,
-} from "@/sanity/types";
-
-/**
- * Fetch all posts, optionally filtered by tag
- */
-export async function getPosts(tag?: string) {
-  const { data } = await sanityFetch({
-    query: allPostsQuery,
-    params: tag
-      ? { tag }
-      : ({ tag: undefined } as unknown as { tag: undefined }),
-  });
+export async function getPosts(tag?: string | null) {
+  const { data } = await sanityFetch({ query: allPostsQuery, params: { tag: tag ?? null } });
   return data;
 }
 
-export type PostsData = AllPostsQueryResult;
-
-/**
- * Fetch a single post by slug
- */
 export async function getPostBySlug(slug: string) {
-  const { data } = await sanityFetch({
-    query: postBySlugQuery,
-    params: { slug },
-  });
+  const { data } = await sanityFetch({ query: postBySlugQuery, params: { slug } });
   return data;
 }
 
-export type PostData = PostBySlugQueryResult;
-
-/**
- * Fetch all available tags
- */
 export async function getTags() {
-  const { data } = await sanityFetch({
-    query: allTagsQuery,
-  });
+  const { data } = await sanityFetch({ query: allTagsQuery });
   return data;
 }
-
-export type TagsData = AllTagsQueryResult;
 ```
 
-**Gebruik:**
-
-```tsx
-import { getPosts, getTags } from "@/hooks/useSanity";
-
-export default async function BlogPage({ searchParams }: PageProps) {
-  const posts = await getPosts(searchParams.tag as string | undefined);
-  const tags = await getTags();
-
-  // ... rest van pagina
-}
-```
-
-**Voordelen:**
-
-- ✅ Gecentraliseerde data fetching logica
-- ✅ Type exports voor type-safe gebruik
-- ✅ JSDoc commentaren voor documentation
-- ✅ Eenvoudiger te testen en mocken
-- ✅ Server-side fetch functies (niet React hooks)
+**Voordelen:** ✅ Gecentraliseerd ✅ Type-safe ✅ `server-only` ✅ Request memoization ✅ Eenvoudig te testen
 
 ---
 
-## 3. Utility Functions - Date Formatting
+## 3. Utility Library — Gestructureerd per Categorie
 
-### ❌ Voor (Scattered utilities)
+### ❌ Voor (Verspreide utilities)
 
-**Bestand:** `utils/time_converter.ts`
+Geen gestructureerde utility folder — functies waren inline of in losse bestanden.
 
-```tsx
-export const formatTime = (dateString: string): string => {
-  const date = new Date(dateString);
-  return date.toLocaleDateString("nl-NL", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
-};
+### ✅ Na (Georganiseerde lib/utils/ directory)
+
+```
+lib/utils/
+├── array.ts          # Array helpers (extractTagSlugs, etc.)
+├── date.ts           # Datum formattering (formatDate, getRelativeTime)
+├── index.ts          # Barrel export
+├── markdown.ts       # Markdown configuratie (markdown-it instance)
+├── math.ts           # Wiskundige helpers
+├── reading-time.ts   # Leestijd berekening
+├── string.ts         # String helpers
+├── styles.ts         # Style constanten (GRADIENTS, GLASS_CLASSES, cn, etc.)
+└── tag-styles.ts     # Gedeelde tag styling (getTagClassName)
 ```
 
-**Problemen:**
-
-- Alleen time formatting
-- Beperkte functionaliteit
-- Geen georganiseerde structuur
-- Moeilijk uitbreidbaar
-
-### ✅ Na (Organized utility library)
-
-**Nieuw bestand:** `lib/utils/date.ts`
-
-```tsx
-/**
- * Format a date string to a readable time (HH:MM)
- */
-export const formatTime = (dateString: string): string => {
-  const date = new Date(dateString);
-  return date.toLocaleTimeString("nl-NL", {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-};
-
-/**
- * Format a date string to a readable date (DD Month YYYY)
- */
-export const formatDate = (dateString: string): string => {
-  const date = new Date(dateString);
-  return date.toLocaleDateString("nl-NL", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
-};
-
-/**
- * Get relative time from now (e.g., "2 days ago")
- */
-export const getRelativeTime = (dateString: string): string => {
-  const date = new Date(dateString);
-  const now = new Date();
-  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-
-  const intervals = {
-    jaar: 31536000,
-    maand: 2592000,
-    week: 604800,
-    dag: 86400,
-    uur: 3600,
-    minuut: 60,
-  };
-
-  for (const [unit, seconds] of Object.entries(intervals)) {
-    const interval = Math.floor(diffInSeconds / seconds);
-    if (interval >= 1) {
-      return `${interval} ${unit}${interval !== 1 ? (unit === "maand" ? "en" : "en") : ""} geleden`;
-    }
-  }
-
-  return "zojuist";
-};
-```
-
-**Nieuw bestand:** `lib/utils/index.ts`
-
-```tsx
-// Date utilities
-export { formatTime, formatDate, getRelativeTime } from "./date";
-
-// String utilities
-export const truncate = (str: string, length: number): string => {
-  return str.length > length ? `${str.substring(0, length)}...` : str;
-};
-
-export const slugify = (str: string): string => {
-  return str
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
-};
-
-// Array utilities
-export const unique = <T>(arr: T[]): T[] => [...new Set(arr)];
-
-export const groupBy = <T>(arr: T[], key: keyof T): Record<string, T[]> => {
-  return arr.reduce((acc, item) => {
-    const group = String(item[key]);
-    if (!acc[group]) acc[group] = [];
-    acc[group].push(item);
-    return acc;
-  }, {} as Record<string, T[]>);
-};
-
-// Tailwind class name helper
-export const cn = (...classes: (string | undefined | null | false)[]): string => {
-  return classes.filter(Boolean).join(" ");
-};
-```
-
-**Gebruik:**
-
-```tsx
-import { formatDate, truncate } from "@/lib/utils";
-
-export default function BlogCard({ post }) {
-  return (
-    <article>
-      <time>{formatDate(post.publishedAt)}</time>
-      <p>{truncate(post.excerpt, 150)}</p>
-    </article>
-  );
-}
-```
-
-**Voordelen:**
-
-- ✅ Georganiseerde folder structuur
-- ✅ Meerdere utility categorieën (date, string, array)
-- ✅ JSDoc commentaren voor elke functie
-- ✅ Single import point via index.ts
-- ✅ Type-safe generics voor array utilities
+**Gebruik:** `import { formatDate } from "@/lib/utils"` via barrel export.
 
 ---
 
-## 4. TypeScript Types - Shared Definitions
+## 4. SVG Iconen — Geëxtraheerd uit Inline JSX
 
-### ❌ Voor (Inline types)
+### ❌ Voor (Inline SVG in componenten)
 
-```tsx
-// In verschillende bestanden herhaald
-interface ButtonProps {
-  children: React.ReactNode;
-  className?: string;
-  onClick?: () => void;
-}
+SVG-paden werden herhaald in navbar, blog componenten, etc.
 
-interface CardProps {
-  children: React.ReactNode;
-  className?: string;
-}
+### ✅ Na (Herbruikbare SVG componenten in svgs/)
 
-// Geen herbruikbare base types
+```
+app/(site)/components/svgs/
+├── ArrowLeftIcon.tsx
+├── ArrowRightIcon.tsx
+├── ArrowUpIcon.tsx
+├── BlogIcon.tsx
+├── BuildingIcon.tsx
+├── CalendarIcon.tsx
+├── ChevronDownIcon.tsx
+├── ClockIcon.tsx
+├── CloseIcon.tsx
+├── ExternalLinkIcon.tsx
+├── HomeIcon.tsx
+├── MenuIcon.tsx
+└── UserIcon.tsx
 ```
 
-### ✅ Na (Centralized types)
+**Gebruik:** `import { ClockIcon, CalendarIcon } from "@/app/(site)/components/svgs"`
 
-**Nieuw bestand:** `types/index.ts`
-
-```tsx
-import type { ReactNode } from "react";
-
-// ==========================================
-// Base Component Types
-// ==========================================
-
-export interface BaseComponentProps {
-  children?: ReactNode;
-  className?: string;
-}
-
-export interface WithIcon {
-  iconName?: string;
-  icon?: ReactNode;
-}
-
-export interface LinkProps extends BaseComponentProps {
-  href: string;
-  external?: boolean;
-  ariaLabel?: string;
-}
-
-// ==========================================
-// Page Props
-// ==========================================
-
-export interface PageProps {
-  params?: Promise<Record<string, string>>;
-  searchParams?:
-    | Promise<Record<string, string | string[] | undefined>>
-    | Record<string, string | string[] | undefined>;
-}
-
-// ==========================================
-// Form Types
-// ==========================================
-
-export interface FormField {
-  name: string;
-  label: string;
-  type: "text" | "email" | "textarea" | "select";
-  required?: boolean;
-  placeholder?: string;
-  options?: { value: string; label: string }[];
-}
-
-// ==========================================
-// API Response Types
-// ==========================================
-
-export interface ApiResponse<T = unknown> {
-  data?: T;
-  error?: string;
-  success: boolean;
-}
-
-export interface PaginatedResponse<T> {
-  items: T[];
-  page: number;
-  pageSize: number;
-  total: number;
-  hasMore: boolean;
-}
-
-// ==========================================
-// UI State Types
-// ==========================================
-
-export type Toast = {
-  id: string;
-  message: string;
-  type: "success" | "error" | "warning" | "info";
-  duration?: number;
-};
-
-// ==========================================
-// Utility Types
-// ==========================================
-
-export type Nullable<T> = T | null;
-export type Optional<T> = T | undefined;
-export type Maybe<T> = T | null | undefined;
-```
-
-**Gebruik:**
-
-```tsx
-import type { BaseComponentProps, PageProps } from "@/types";
-
-interface ButtonProps extends BaseComponentProps {
-  variant?: "primary" | "secondary";
-}
-
-export default function BlogPage({ searchParams }: PageProps) {
-  // Type-safe searchParams
-}
-```
-
-**Voordelen:**
-
-- ✅ Herbruikbare base types
-- ✅ Consistent type gebruik
-- ✅ Utility types voor common patterns
-- ✅ Georganiseerde categorieën
-- ✅ Future-proof voor nieuwe features
+**Voordelen:** ✅ 13 herbruikbare iconen ✅ Type-safe met className prop ✅ Consistentie ✅ DRY
 
 ---
 
-## 5. Data Centralization - About Page
+## 5. Blog Componenten — Extractie uit [slug]/page.tsx
 
-### ❌ Voor (Inline data)
+### ❌ Voor (Alles in 1 bestand)
 
-**Bestand:** `app/(site)/about/page.tsx`
+`app/(site)/blog/[slug]/page.tsx` bevatte ~250+ regels met alle logica inline:
+- Inline MobileTocToggle component
+- Inline RelatedPostsSection
+- Inline BackToBlogsLink
+- Inline PostMeta rendering
 
-```tsx
-export default function AboutPage() {
-  return (
-    <main>
-      <h1>Over Mij</h1>
-      <p>
-        Mijn naam is Hamed Jafari en ik ben een student Graduaat Programmeren
-        aan AP Hogeschool. Momenteel loop ik stage bij Adomate...
-      </p>
-      {/* Alle content inline */}
-    </main>
-  );
-}
+### ✅ Na (Aparte componenten)
+
+```
+app/(site)/components/blog/
+├── AuthorInfo.tsx         # Auteur avatar + naam
+├── BackToBlogsLink.tsx    # Navigatie link terug naar blog
+├── BackToTopButton.tsx    # Floating scroll-to-top knop
+├── BlogCard.tsx           # Herbruikbare post card (grid + related variant)
+├── CodeBlock.tsx          # CodeBlockEnhancer — copy button
+├── MobileTocToggle.tsx    # Inklapbare TOC voor mobiel
+├── PostHeader.tsx         # Hero sectie met featured image
+├── PostImageFallback.tsx  # Fallback voor posts zonder afbeelding
+├── PostMeta.tsx           # Metadata bar (auteur, datum, leestijd)
+├── ReadingProgress.tsx    # Leesvoortgangsbalk
+├── RelatedPostsSection.tsx # Gerelateerde posts
+├── TableOfContents.tsx    # Desktop TOC met IntersectionObserver
+└── TagList.tsx            # Tag badges
 ```
 
-**Problemen:**
-
-- Data en UI logica gemengd
-- Moeilijk te updaten
-- Geen herbruikbaarheid
-- Niet type-safe
-
-### ✅ Na (Separated data layer)
-
-**Nieuw bestand:** `app/(site)/data/about.ts`
-
-```tsx
-export const aboutHeaderData = {
-  badge: "Portfolio",
-  title: "Over Mij",
-  description:
-    "Student Graduaat Programmeren met passie voor webdevelopment en innovatieve technologieën.",
-};
-
-export const profilePhotoData = {
-  src: "/hamed.png",
-  alt: "Hamed Jafari - Graduaat Programmeren Student",
-  width: 200,
-  height: 200,
-};
-
-export const personalInfoData = {
-  title: "Persoonlijke Informatie",
-  items: [
-    { label: "Naam", value: "Hamed Jafari" },
-    { label: "Opleiding", value: "Graduaat Programmeren" },
-    { label: "School", value: "AP Hogeschool" },
-    { label: "Email", value: "hamed.jafari@example.com" },
-  ],
-};
-
-// ... meer data exports
-```
-
-**Gebruik:**
-
-```tsx
-import { aboutHeaderData, profilePhotoData } from "@/app/(site)/data/about";
-
-export default function AboutPage() {
-  return (
-    <main>
-      <h1>{aboutHeaderData.title}</h1>
-      <Image
-        src={profilePhotoData.src}
-        alt={profilePhotoData.alt}
-        width={profilePhotoData.width}
-        height={profilePhotoData.height}
-      />
-    </main>
-  );
-}
-```
-
-**Voordelen:**
-
-- ✅ Scheiding van data en UI
-- ✅ Eenvoudig te updaten (1 bestand)
-- ✅ Type-safe object structures
-- ✅ Herbruikbaar in meerdere componenten
-- ✅ Content management centraal
+**Voordelen:** ✅ Van ~250 naar ~50 regels in pagina ✅ Herbruikbare componenten ✅ DRY
 
 ---
 
-## Migratie Checklist
+## 6. UI Componenten — Pagina Wrappers
 
-Voor toekomstige ontwikkelaars die deze patronen willen toepassen:
+### Nieuwe componenten voor consistente paginastructuur
 
-### Section Component
+| Component          | Functie                                          |
+| ------------------ | ------------------------------------------------ |
+| `PageLayout`       | Herbruikbare pagina-wrapper met gradient bg      |
+| `PageHeader`       | Header met gradient titel en subtitle            |
+| `EmptyState`       | Lege toestand placeholder (geen posts, 404, etc.)|
+| `GlassCard`        | Glasmorphism container voor secties              |
+| `InfoCard`         | Informatiekaart met titel, icoon en link         |
 
-- [ ] Identificeer herhaalde className patterns
-- [ ] Vervang met `<Section variant="glass">`
-- [ ] Update imports: `import { Section } from "@/app/(site)/components/ui/Section"`
+---
 
-### Data Fetching
+## 7. Data Centralisatie — Content los van UI
 
-- [ ] Verplaats sanityFetch calls naar `hooks/useSanity.ts`
-- [ ] Export type definitions
-- [ ] Update imports: `import { getPosts } from "@/hooks/useSanity"`
+### ❌ Voor (Inline data in pagina's)
 
-### Utilities
+```tsx
+// about/page.tsx — data en UI gemengd
+<h1>Over Mij</h1>
+<p>Mijn naam is Hamed Sadim...</p>
+```
 
-- [ ] Plaats helpers in juiste category (`lib/utils/date.ts`, etc.)
-- [ ] Export via `lib/utils/index.ts`
-- [ ] Update imports: `import { formatDate } from "@/lib/utils"`
+### ✅ Na (Separate data files)
 
-### Types
+```
+app/(site)/data/
+├── about.ts       # Persoonlijke info, leerdoelen, contact, links
+├── hero.ts        # Homepage hero content + badges
+├── index.ts       # Barrel export
+├── metadata.ts    # Centrale SEO metadata configuratie
+└── navbar.ts      # Navigatie items
+```
 
-- [ ] Check of type al bestaat in `types/index.ts`
-- [ ] Extend base types waar mogelijk
-- [ ] Voeg nieuwe shared types toe aan centraal bestand
+**Voordelen:** ✅ Data los van UI ✅ Eén bestand om content te wijzigen ✅ Type-safe
 
-### Data
+---
 
-- [ ] Scheid content van componenten
-- [ ] Plaats in `app/(site)/data/` folder
-- [ ] Export met duidelijke naming convention
+## 8. Scroll Flicker Fix
+
+### Probleem
+
+`backdrop-filter: blur()` veroorzaakte GPU re-paints tijdens scrollen, wat leidde tot:
+- Zichtbare flicker/haat op de navbar
+- Performance drops tijdens scrollen
+- Janky mobile menu
+
+### Oplossing
+
+| Wat                   | Waar                          | Aanpassing                               |
+| --------------------- | ----------------------------- | ---------------------------------------- |
+| Navbar                | `navbar.tsx`                  | Statisch gemaakt (geen scroll-state)     |
+| `will-change: transform` | `navbar.tsx`               | GPU compositor layer forceren            |
+| `backdrop-blur`       | Section, GlassCard, navbar    | Verwijderd uit alle componenten          |
+| Sheet background      | `navbar.tsx` (SheetContent)   | Gradient i.p.v. `backdrop-filter`       |
+
+**Resultaat:** ✅ Smooth scrollen ✅ Geen flicker ✅ Betere performance
+
+---
+
+## 9. StaggerItem — Dead Code Verwijderd
+
+`StaggerItem.tsx` was een wrapper voor entrance-animaties die nergens meer werd gebruikt. Component verwijderd; export in `ui/index.ts` was al opgeruimd. Typecheck ✅
+
+---
+
+## 10. JSDoc Verbeteringen
+
+| Bestand                       | Verbetering                               |
+| ----------------------------- | ----------------------------------------- |
+| Alle SVG iconen (13)          | `@returns`, `@param`, inline TSDoc        |
+| InfoSection.tsx               | `@param`, `@property` op interface        |
+| markdown.ts                   | `@param`, `@returns` voor beide functies  |
+| styles.ts (cn)                | `@param inputs`, `@returns`               |
+| Section.tsx                   | `@param`, `@returns`, verouderde info weg |
+| TagList.tsx                   | `@param`, `@returns`, dedup uitleg        |
+| CodeBlock.tsx (handleCopy)    | `@returns void` toegevoegd                |
+| metadata.ts (generateSiteMetadata) | `@see Metadata` referentie            |
 
 ---
 
 ## Resultaten
 
-### Metrics
-
-| Metric                           | Voor               | Na                 | Verbetering       |
-| -------------------------------- | ------------------ | ------------------ | ----------------- |
-| Herhaalde glassmorphism patterns | 4x                 | 1x                 | -75% duplicatie   |
-| Data fetch implementations       | 3x                 | 3 functies         | Gecentraliseerd   |
-| Utility bestanden                | 1 (time_converter) | 2 (date + index)   | +organisatie      |
-| Type definitions                 | Verspreid          | 1 centraal bestand | +herbruikbaarheid |
-| Data inline in JSX               | Ja                 | Nee                | +onderhoud        |
-
-### Code Quality
-
-✅ **DRY Principle**: Alle herhaalde code geëlimineerd  
-✅ **Type Safety**: Volledige TypeScript coverage  
-✅ **Maintainability**: Gecentraliseerde updates  
-✅ **Scalability**: Klaar voor toekomstige features  
-✅ **Documentation**: JSDoc voor alle functies  
-✅ **Best Practices**: Next.js 15 App Router patterns
+| Onderdeel                     | Voorheen               | Nu                      |
+| ----------------------------- | ---------------------- | ----------------------- |
+| Blog detail pagina            | ~250 regels, alles 1 file | ~60 regels met componenten |
+| SVG iconen                    | Inline, herhaald       | 13 herbruikbare componenten |
+| Styling classes               | Herhaald per component | Gecentraliseerd in `styles.ts` |
+| Tag styling                   | Inline, inconsistent   | Shared utilities (`tag-styles.ts`) |
+| Data fetching                 | Directe sanityFetch    | Gecentraliseerd in `lib/sanity.ts` |
+| Static content                | Inline in JSX          | Separate data files    |
+| JSDoc coverage                | ~60%                   | ~98%                   |
+| Dead code (StaggerItem)       | Aanwezig               | Verwijderd             |
+| Scroll flicker                | Aanwezig               | Opgelost               |
+| Mobile menu sheet             | Donkere plakkaat       | Themagradient          |
 
 ---
 
 ## Conclusie
 
-Deze refactoring heeft de codebase getransformeerd van een werkende maar repetitieve applicatie naar een goed georganiseerde, onderhoudbare en schaalbare Next.js applicatie volgens industry best practices.
+De refactoring heeft de codebase getransformeerd naar een goed gestructureerde, onderhoudbare applicatie:
 
-**Key Takeaways:**
-
-- **Componenten**: Herbruikbaar en variant-based
-- **Data Fetching**: Gecentraliseerd en type-safe
-- **Utilities**: Georganiseerd per categorie
-- **Types**: Shared definitions voor consistentie
-- **Data**: Gescheiden van UI logica
-
-Deze structuur maakt toekomstige ontwikkeling sneller, veiliger en plezieriger.
+- **DRY** — Code duplicatie geëlimineerd via componenten en utilities
+- **Type Safety** — Volledige TypeScript coverage
+- **Onderhoudbaar** — Gecentraliseerde updates
+- **Schaalbaar** — Klaar voor nieuwe features
+- **Gedocumenteerd** — JSDoc op alle functies en componenten

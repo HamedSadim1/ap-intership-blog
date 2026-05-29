@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import { GLASS_CLASSES, ROUNDED_CLASSES, cn } from "@/lib/utils/styles";
 
 /**
  * Props voor GlassCard component
@@ -11,8 +12,8 @@ interface GlassCardProps {
 }
 
 /**
- * GlassCard - Een glasmorphism container met blur effect
- * Gebruikt backdrop-blur en semi-transparante achtergrond voor een modern glass effect
+ * GlassCard - Een glasmorphism container
+ * Gebruikt semi-transparante achtergrond voor een modern glass effect
  *
  * @example
  * <GlassCard className="max-w-xl">
@@ -20,10 +21,15 @@ interface GlassCardProps {
  *   <p>Content hier...</p>
  * </GlassCard>
  */
-const GlassCard = ({ children, className = "" }: GlassCardProps) => {
+const GlassCard = ({ children, className }: GlassCardProps) => {
   return (
     <div
-      className={`relative z-10 backdrop-blur-xl bg-white/10 border border-white/20 rounded-3xl p-10 md:p-14 shadow-2xl ${className}`}
+      className={cn(
+        "relative z-10 p-10 md:p-14 shadow-2xl",
+        GLASS_CLASSES.card,
+        ROUNDED_CLASSES.xl,
+        className,
+      )}
     >
       {children}
     </div>

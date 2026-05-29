@@ -1,7 +1,19 @@
 interface CalendarIconProps {
+  /** Tailwind classes voor grootte, kleur, etc. (default: "w-4 h-4") */
   className?: string;
 }
 
+/**
+ * CalendarIcon — Kalender / datum
+ *
+ * Gebruikt in PostMeta voor publicatiedatum weergave.
+ *
+ * @param className - Tailwind classes (default: "w-4 h-4")
+ * @returns SVG element
+ *
+ * @example
+ * <CalendarIcon className="w-5 h-5 text-white/40" />
+ */
 const CalendarIcon = ({ className = "w-4 h-4" }: CalendarIconProps) => {
   return (
     <svg

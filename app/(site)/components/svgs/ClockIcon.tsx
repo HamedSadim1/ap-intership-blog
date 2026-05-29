@@ -1,7 +1,19 @@
 interface ClockIconProps {
+  /** Tailwind classes voor grootte, kleur, etc. (default: "w-4 h-4") */
   className?: string;
 }
 
+/**
+ * ClockIcon — Klok / tijd
+ *
+ * Gebruikt in PostMeta en BlogCard voor leestijd indicatie.
+ *
+ * @param className - Tailwind classes (default: "w-4 h-4")
+ * @returns SVG element
+ *
+ * @example
+ * <ClockIcon className="w-3.5 h-3.5 text-white/40" />
+ */
 const ClockIcon = ({ className = "w-4 h-4" }: ClockIconProps) => {
   return (
     <svg
