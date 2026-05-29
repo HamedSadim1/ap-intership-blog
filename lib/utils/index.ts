@@ -11,8 +11,5 @@ export { formatTime, formatDate, getRelativeTime } from "./date";
 export * from "./styles";
 export * from "./tag-styles";
 
-// Markdown utilities
-export { renderMarkdown, extractHeadings } from "./markdown";
-
 // Reading time utility
 export { estimateReadingTime } from "./reading-time";

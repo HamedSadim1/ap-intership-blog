@@ -368,6 +368,42 @@ export type AllTagsQueryResult = Array<{
   slug: Slug | null;
 }>;
 
+// Source: sanity/lib/queries.ts
+// Variable: relatedPostsQuery
+// Query: *[_type == "post" && status == "published" && _id != $currentId && count((tags[]->slug.current)[@ in $tagSlugs]) > 0] | order(published_at desc) [0...$limit] {  _id,  title,  slug,  excerpt,  featured_image,  published_at,  body,  author-> {    _id,    username,    slug,    image,  },  tags[]-> {    _id,    name,    slug,  },}
+export type RelatedPostsQueryResult = Array<{
+  _id: string;
+  title: string | null;
+  slug: Slug | null;
+  excerpt: string | null;
+  featured_image: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+  } | null;
+  published_at: string | null;
+  body: Markdown | null;
+  author: {
+    _id: string;
+    username: string | null;
+    slug: Slug | null;
+    image: {
+      asset?: SanityImageAssetReference;
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      _type: "image";
+    } | null;
+  } | null;
+  tags: Array<{
+    _id: string;
+    name: string | null;
+    slug: Slug | null;
+  }> | null;
+}>;
+
 // Query TypeMap
 import "@sanity/client";
 declare module "@sanity/client" {

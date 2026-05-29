@@ -95,7 +95,7 @@ export default async function BlogPage({ searchParams }: PageProps) {
               return (
               <article
                 key={post._id}
-                className="group bg-white/10 backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg transition-[transform,box-shadow] duration-300 ease-[var(--ease-out)] hover:shadow-2xl hover:-translate-y-2 hover:shadow-purple-500/20 animate-card"
+                className="group bg-white/10 backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg transition-all duration-300 ease-[var(--ease-out)] hover:shadow-2xl hover:-translate-y-2 hover:shadow-purple-500/20 animate-card"
                 style={{ animationDelay: `${index * 0.05}s` }}
               >
                 <Link
@@ -114,7 +114,7 @@ export default async function BlogPage({ searchParams }: PageProps) {
                         width={800}
                         height={450}
                         priority={index < 3}
-                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                        className="w-full h-full object-cover transition-transform duration-300 ease-[var(--ease-out)] group-hover:scale-110"
                       />
                     ) : (
                       <div className="w-full h-full bg-linear-to-br from-blue-500/20 via-purple-500/20 to-pink-500/20 flex items-center justify-center">
@@ -144,7 +144,7 @@ export default async function BlogPage({ searchParams }: PageProps) {
                     </div>
 
                     {/* Title */}
-                    <h2 className="text-xl font-semibold text-white mb-2 line-clamp-2 group-hover:text-transparent group-hover:bg-linear-to-r group-hover:from-purple-200 group-hover:to-pink-200 group-hover:bg-clip-text transition-colors duration-200">
+                    <h2 className="text-xl font-semibold text-white mb-2 line-clamp-2 group-hover:text-transparent group-hover:bg-linear-to-r group-hover:from-purple-200 group-hover:to-pink-200 group-hover:bg-clip-text">
                       {post.title}
                     </h2>
 

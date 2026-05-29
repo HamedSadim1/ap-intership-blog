@@ -34,11 +34,15 @@ export const ROUNDED_CLASSES = {
   full: "rounded-full",
 } as const;
 
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
+
 /**
- * Helper function om classes te combineren
+ * Helper function om Tailwind classes te combineren en conflicts op te lossen.
+ * Gebruikt clsx voor conditionele logica + twMerge voor Tailwind deduplicatie.
  */
-export function cn(...classes: (string | undefined | false)[]): string {
-  return classes.filter(Boolean).join(" ");
+export function cn(...inputs: ClassValue[]): string {
+  return twMerge(clsx(inputs));
 }
 
 
