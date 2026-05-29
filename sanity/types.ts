@@ -285,7 +285,7 @@ export type AllSanitySchemaTypes =
 
 // Source: sanity/lib/queries.ts
 // Variable: allPostsQuery
-// Query: *[_type == "post" && status == "published" && select(    defined($tag) => $tag in tags[]->slug.current,    true  )] | order(published_at desc) {  _id,  title,  slug,  excerpt,  featured_image,  status,  is_featured,  published_at  ,  author-> {    _id,    username,    slug,    image,  },  tags[]-> {    _id,    name,    slug,  },}
+// Query: *[_type == "post" && status == "published" && select(    defined($tag) => $tag in tags[]->slug.current,    true  )] | order(published_at desc) {  _id,  title,  slug,  excerpt,  featured_image,  status,  is_featured,  published_at,  body,  author-> {    _id,    username,    slug,    image,  },  tags[]-> {    _id,    name,    slug,  },}
 export type AllPostsQueryResult = Array<{
   _id: string;
   title: string | null;
@@ -301,6 +301,7 @@ export type AllPostsQueryResult = Array<{
   status: "archived" | "draft" | "published" | null;
   is_featured: boolean | null;
   published_at: string | null;
+  body: Markdown | null;
   author: {
     _id: string;
     username: string | null;
@@ -367,12 +368,49 @@ export type AllTagsQueryResult = Array<{
   slug: Slug | null;
 }>;
 
+// Source: sanity/lib/queries.ts
+// Variable: relatedPostsQuery
+// Query: *[_type == "post" && status == "published" && _id != $currentId && count((tags[]->slug.current)[@ in $tagSlugs]) > 0] | order(published_at desc) [0...$limit] {  _id,  title,  slug,  excerpt,  featured_image,  published_at,  body,  author-> {    _id,    username,    slug,    image,  },  tags[]-> {    _id,    name,    slug,  },}
+export type RelatedPostsQueryResult = Array<{
+  _id: string;
+  title: string | null;
+  slug: Slug | null;
+  excerpt: string | null;
+  featured_image: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+  } | null;
+  published_at: string | null;
+  body: Markdown | null;
+  author: {
+    _id: string;
+    username: string | null;
+    slug: Slug | null;
+    image: {
+      asset?: SanityImageAssetReference;
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      _type: "image";
+    } | null;
+  } | null;
+  tags: Array<{
+    _id: string;
+    name: string | null;
+    slug: Slug | null;
+  }> | null;
+}>;
+
 // Query TypeMap
 import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
-    '*[_type == "post" && status == "published" && select(\n    defined($tag) => $tag in tags[]->slug.current,\n    true\n  )] | order(published_at desc) {\n  _id,\n  title,\n  slug,\n  excerpt,\n  featured_image,\n  status,\n  is_featured,\n  published_at\n  ,\n  author-> {\n    _id,\n    username,\n    slug,\n    image,\n  },\n  tags[]-> {\n    _id,\n    name,\n    slug,\n  },\n}': AllPostsQueryResult;
+    '*[_type == "post" && status == "published" && select(\n    defined($tag) => $tag in tags[]->slug.current,\n    true\n  )] | order(published_at desc) {\n  _id,\n  title,\n  slug,\n  excerpt,\n  featured_image,\n  status,\n  is_featured,\n  published_at,\n  body,\n  author-> {\n    _id,\n    username,\n    slug,\n    image,\n  },\n  tags[]-> {\n    _id,\n    name,\n    slug,\n  },\n}': AllPostsQueryResult;
     '*[_type == "post" && slug.current == $slug && status == "published"][0] {\n  _id,\n  title,\n  slug,\n  excerpt,\n  body,\n  featured_image,\n  status,\n  is_featured,\n  published_at,\n  author-> {\n    _id,\n    username,\n    slug,\n    image,\n},\n\n  tags[]-> {\n    _id,\n    name,\n    slug,\n},\n}': PostBySlugQueryResult;
     '*[_type == "tag"] | order(name asc) {\n  _id,\n  name,\n  slug,\n}': AllTagsQueryResult;
+    '*[_type == "post" && status == "published" && _id != $currentId && count((tags[]->slug.current)[@ in $tagSlugs]) > 0] | order(published_at desc) [0...$limit] {\n  _id,\n  title,\n  slug,\n  excerpt,\n  featured_image,\n  published_at,\n  body,\n  author-> {\n    _id,\n    username,\n    slug,\n    image,\n  },\n  tags[]-> {\n    _id,\n    name,\n    slug,\n  },\n}': RelatedPostsQueryResult;
   }
 }

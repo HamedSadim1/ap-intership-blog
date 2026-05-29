@@ -3,7 +3,7 @@
  * DRY principe voor tag components (TagFilter & TagList)
  */
 
-import { cn, ROUNDED_CLASSES, TRANSITION_CLASSES } from "./styles";
+import { cn, ROUNDED_CLASSES, TRANSITION_CLASSES, GRADIENTS } from "./styles";
 
 /**
  * Tag size configuratie
@@ -21,11 +21,11 @@ export const TAG_STYLES = {
   base: cn(
     ROUNDED_CLASSES.full,
     "text-white",
-    TRANSITION_CLASSES.all,
+    TRANSITION_CLASSES.colors,
     "cursor-pointer",
   ),
   inactive: "bg-white/20 hover:bg-white/30",
-  active: "bg-linear-to-r from-purple-500 to-pink-500 shadow-lg",
+  active: GRADIENTS.tagActive,
   nonClickable: "bg-purple-500/20 text-purple-200",
 } as const;
 

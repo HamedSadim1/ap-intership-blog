@@ -1,7 +1,19 @@
 interface UserIconProps {
+  /** Tailwind classes voor grootte, kleur, etc. (default: "w-6 h-6") */
   className?: string;
 }
 
+/**
+ * UserIcon — Gebruiker / profiel
+ *
+ * Gebruikt in de navigatie voor de about/over mij link.
+ *
+ * @param className - Tailwind classes (default: "w-6 h-6")
+ * @returns SVG element
+ *
+ * @example
+ * <UserIcon className="w-5 h-5" />
+ */
 const UserIcon = ({ className = "w-6 h-6" }: UserIconProps) => {
   return (
     <svg

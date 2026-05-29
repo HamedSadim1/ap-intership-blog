@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ReactNode } from "react";
 import { ExternalLinkIcon } from "../svgs";
+import { GLASS_CLASSES, ROUNDED_CLASSES, cn } from "@/lib/utils/styles";
 
 /**
  * Props voor InfoCard component
@@ -43,13 +44,13 @@ const InfoCard = ({
 }: InfoCardProps) => {
   return (
     <div
-      className={`backdrop-blur-sm bg-white/5 rounded-2xl p-6 border border-white/10 ${className}`}
+      className={cn("p-6", GLASS_CLASSES.dark, GLASS_CLASSES.border, ROUNDED_CLASSES.lg, className)}
     >
       <h2 className="text-white font-semibold text-xl mb-3 flex items-center gap-2">
         {icon}
         {title}
       </h2>
-      <div className="text-white/80 leading-relaxed mb-4">{children}</div>
+      <div className="text-white/90 leading-relaxed mb-4">{children}</div>
       {link && (
         <Link
           href={link.href}

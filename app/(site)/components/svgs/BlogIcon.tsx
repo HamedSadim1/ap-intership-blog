@@ -1,7 +1,19 @@
 interface BlogIconProps {
+  /** Tailwind classes voor grootte, kleur, etc. (default: "w-6 h-6") */
   className?: string;
 }
 
+/**
+ * BlogIcon — Documenten / artikel
+ *
+ * Gebruikt in de navigatie voor de blog link.
+ *
+ * @param className - Tailwind classes (default: "w-6 h-6")
+ * @returns SVG element
+ *
+ * @example
+ * <BlogIcon className="w-5 h-5" />
+ */
 const BlogIcon = ({ className = "w-6 h-6" }: BlogIconProps) => {
   return (
     <svg

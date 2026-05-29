@@ -6,7 +6,6 @@
  * - Badge: Status badge met pulse effect
  * - Button: Veelzijdige button/link component
  * - InfoCard: Informatie kaart met link
- * - ScrollIndicator: Geanimeerde scroll hint
  * - DecorativeBlobs: Decoratieve achtergrond elementen
  * - Divider: Gradient scheidingslijn
  * - NavLink: Navigatie link met hover effect
@@ -18,9 +17,11 @@ export { default as Section } from "./Section";
 export { default as Badge } from "./Badge";
 export { default as Button } from "./Button";
 export { default as InfoCard } from "./InfoCard";
-export { default as ScrollIndicator } from "./ScrollIndicator";
 export { default as DecorativeBlobs } from "./DecorativeBlobs";
 export { default as Divider } from "./Divider";
 export { default as NavLink } from "./NavLink";
 export { default as NavBrand } from "./NavBrand";
 export { default as MobileMenuButton } from "./MobileMenuButton";
+export { PageLayout } from "./PageLayout";
+export { PageHeader } from "./PageHeader";
+export { EmptyState } from "./EmptyState";

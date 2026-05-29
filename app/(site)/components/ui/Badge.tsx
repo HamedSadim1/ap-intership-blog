@@ -38,10 +38,10 @@ const Badge = ({
 }: BadgeProps) => {
   return (
     <span
-      className={`inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/20 backdrop-blur-sm text-white text-sm font-medium border border-white/30 ${className}`}
+      className={`inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/15 text-white text-sm font-medium border border-white/30 ${className}`}
     >
       {showPulse && (
-        <span className={`w-2 h-2 ${pulseColor} rounded-full animate-pulse`} />
+        <span className={`w-2 h-2 ${pulseColor} rounded-full`} />
       )}
       {children}
     </span>

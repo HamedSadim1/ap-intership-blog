@@ -18,7 +18,7 @@ export function ContentParagraphs({ paragraphs }: ContentParagraphsProps) {
       {paragraphs.map((paragraph, index) => (
         <p
           key={index}
-          className={`text-white/80 leading-relaxed ${
+          className={`text-white/90 leading-relaxed ${
             index < paragraphs.length - 1 ? "mb-4" : ""
           }`}
         >

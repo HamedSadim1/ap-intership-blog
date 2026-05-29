@@ -1,8 +1,8 @@
-# Next.js 15/16 Performance Optimalisaties
+# Next.js 16 Performance Optimalisaties
 
 ## Overzicht
 
-Dit document beschrijft alle Next.js 15/16 best practices die zijn geïmplementeerd om de applicatie te optimaliseren voor performance, SEO en gebruikerservaring.
+Dit document beschrijft de performance optimalisaties die zijn geïmplementeerd in deze Next.js 16 applicatie.
 
 ---
 
@@ -10,39 +10,28 @@ Dit document beschrijft alle Next.js 15/16 best practices die zijn geïmplemente
 
 ### Probleem: Dubbele Data Fetching
 
-**Voor:**
+**Voorheen** werd dezelfde post twee keer gefetched — een keer in `generateMetadata()` en een keer in de page component:
 
 ```tsx
-// In [slug]/page.tsx werd de post TWEE keer gefetcht:
-
+// ❌ Voorheen: 2 fetch calls
 export async function generateMetadata({ params }) {
-  const post = await getPostBySlug(slug); // ❌ Fetch #1
+  const post = await getPostBySlug(slug); // Fetch #1
   return { title: post.title };
 }
 
 export default async function Page({ params }) {
-  const post = await getPostBySlug(slug); // ❌ Fetch #2 (duplicate!)
-  // ...
+  const post = await getPostBySlug(slug); // Fetch #2 (duplicate!)
 }
 ```
 
-**Probleem:**
-
-- Dubbele server requests
-- Langere laadtijden
-- Hogere serverkosten
-- Suboptimale performance
-
 ### Oplossing: Request Memoization
 
-**Na:**
+Next.js **dedupliceert automatisch** identieke `fetch()` requests binnen dezelfde render pass:
 
 ```tsx
-// Next.js 15+ dedupliceert automatisch identieke fetch requests
-// binnen dezelfde render pass!
-
+// ✅ Na: Next.js 16 memoizes automatisch
 export async function generateMetadata({ params }) {
-  const post = await getPostBySlug(slug); // ✅ Fetch #1
+  const post = await getPostBySlug(slug); // Fetch #1 — echte request
   return { title: post.title };
 }
 
@@ -52,268 +41,167 @@ export default async function Page({ params }) {
 }
 ```
 
-**Hoe werkt het?**
-
-Next.js 15+ gebruikt een interne cache voor `fetch()` requests binnen dezelfde render:
-
+**Hoe het werkt:**
 1. **Eerste call** → Maakt daadwerkelijke request naar Sanity
-2. **Tweede call** (zelfde params) → Gebruikt cached result
-3. **Result** → Slechts **1 server request** in plaats van 2!
+2. **Tweede call** (zelfde params) → Gebruikt cached result uit de render pass
+3. **Resultaat** → Slechts **1 server request** i.p.v. 2
 
-**Belangrijk:**
-
-- ✅ Werkt automatisch voor `fetch()` en Sanity's `sanityFetch()`
-- ✅ Scope: Binnen **dezelfde render pass**
-- ✅ Geen extra configuratie nodig
-- ⚠️ Alleen voor **identieke requests** (zelfde query + params)
-
-### Code Documentatie
-
-We hebben comments toegevoegd om dit duidelijk te maken:
-
-```tsx
-/**
- * Next.js 15/16 Best Practices:
- * - Request Memoization: Next.js automatically deduplicates fetch requests
- *   within the same render pass (generateMetadata + page component)
- */
-
-/**
- * Blog Post Detail Page
- *
- * Next.js automatically memoizes getPostBySlug() - the same request
- * in generateMetadata and this component results in only ONE fetch
- * during the same render pass. This is called "Request Memoization".
- */
-export default async function BlogPostPage({ params }: PageProps) {
-  // This fetch is automatically deduplicated with generateMetadata
-  const post = await getPostBySlug(slug);
-  // ...
-}
-```
+> Scope: Alleen binnen **dezelfde render pass** — werkt voor `fetch()` en `sanityFetch()`.
 
 ---
 
-## 2. Static Site Generation (SSG) met ISR
+## 2. Dynamic Rendering (Live Content)
 
-### generateStaticParams
-
-We genereren alle blog posts statisch tijdens build time:
+De blog detail pagina gebruikt `force-dynamic` voor **altijd verse data**:
 
 ```tsx
-/**
- * Generate static params for all blog posts at build time
- * This enables Static Site Generation (SSG) with ISR
- */
-export async function generateStaticParams() {
-  const posts = await getPosts();
-
-  return posts.map((post) => ({
-    slug: post.slug?.current ?? "",
-  }));
-}
-
-// Enable ISR (Incremental Static Regeneration)
-export const revalidate = 60; // Revalidate every 60 seconds
+// app/(site)/blog/[slug]/page.tsx
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 ```
 
-**Voordelen:**
+**Waarom?**
+- ✅ Content wordt live beheerd via Sanity CMS
+- ✅ Geen caching van blog posts — altijd de nieuwste versie
+- Geschikt voor een stageblog waar posts regelmatig wijzigen
 
-- ✅ **Instant page loads**: Pre-rendered HTML
-- ✅ **CDN caching**: Pagina's worden gecached op edge servers
-- ✅ **SEO-vriendelijk**: Volledige HTML voor crawlers
-- ✅ **ISR**: Automatische updates elke 60 seconden zonder rebuild
+### Blog Overzicht (ISR)
 
-**Hoe werkt ISR?**
+De blog listing pagina gebruikt **ISR** met een fallback cache:
 
-1. **Build time**: Alle posts worden statisch gegenereerd
-2. **Request**: CDN serveert cached HTML
-3. **Na 60s**: Volgende request triggert revalidation
-4. **Background**: Nieuwe versie wordt gegenereerd
-5. **CDN update**: Nieuwe versie wordt gecached
+```tsx
+// app/(site)/blog/page.tsx
+export const revalidate = 3600; // 1 uur fallback
+```
+
+Sanity webhooks zorgen voor real-time cache invalidatie bij content wijzigingen.
+
+### Route Segment Config
+
+| Configuratie       | Pagina           | Reden                        |
+| ------------------ | ---------------- | ---------------------------- |
+| `force-dynamic`    | Blog detail      | Altijd verse content         |
+| `revalidate: 3600` | Blog overzicht   | ISR fallback (1 uur)         |
 
 ---
 
 ## 3. Enhanced Metadata voor SEO
 
-### Basis Metadata
+### Basis Metadata (Centraal)
 
 ```tsx
-export const metadata: Metadata = {
-  title: "Over Mij | Stage Portfolio",
-  description: "Student Graduaat Programmeren...",
+// app/(site)/data/metadata.ts
+export const siteMetadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
+  title: { default: "Stageblog | Hamed Sadim", template: "%s | Stageblog" },
+  description: descriptions.long,
+  openGraph: { type: "website", locale: "nl_BE", siteName: "Stageblog" },
+  twitter: { card: "summary_large_image" },
 };
 ```
 
-### Dynamic Metadata met OpenGraph
+### Dynamic Metadata per Post
 
 ```tsx
+// app/(site)/blog/[slug]/page.tsx
 export async function generateMetadata({ params }): Promise<Metadata> {
   const post = await getPostBySlug(slug);
 
   return {
-    title: `${post.title} | Stage Portfolio`,
+    title: `${post.title} | Stageblog`,
     description: post.excerpt,
+    alternates: { canonical: `${SITE_URL}/blog/${slug}` },
     openGraph: {
       title: post.title,
       description: post.excerpt,
       type: "article",
+      url: canonicalUrl,
       publishedTime: post.published_at,
       authors: [post.author?.username],
-      tags: post.tags?.map((tag) => tag.name),
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: post.title,
-      description: post.excerpt,
+      tags: post.tags?.map((t) => t.name),
+      images: [{ url: ogImageUrl, width: 1200, height: 630 }],
     },
   };
 }
 ```
 
 **Voordelen:**
-
-- ✅ **Rich social sharing**: Mooie previews op Twitter, Facebook, LinkedIn
-- ✅ **SEO boost**: Betere rankings door structured data
-- ✅ **Article metadata**: Published time, authors, tags
-- ✅ **Type-safe**: TypeScript typing voor metadata
+- ✅ **Rich social sharing** — Mooie previews op Twitter, Facebook, LinkedIn
+- ✅ **Canonical URLs** — Voorkomt duplicate content issues
+- ✅ **Article metadata** — Published time, authors, tags
+- ✅ **Type-safe** — TypeScript typing voor metadata
 
 ---
 
-## 4. Parallel Data Fetching
+## 4. JSON-LD Gestructureerde Data
 
-### Blog Listing Page
+Het project gebruikt **JSON-LD** voor rich search results:
+
+| Schema             | Pagina                | Doel                                        |
+| ------------------ | --------------------- | ------------------------------------------- |
+| `WebSite`          | Root layout           | Sitelinks Search Box in Google              |
+| `Organization`     | Root layout           | Entity linking                             |
+| `Article`          | Blog detail           | Rich result met headline, image, date      |
+| `BreadcrumbList`   | Blog detail, About    | Breadcrumb pad in zoekresultaten           |
+| `Person`           | About                 | Auteur info in knowledge panel             |
+
+---
+
+## 5. Parallel Data Fetching
 
 ```tsx
-export default async function BlogPage({ searchParams }) {
-  // ✅ Parallel fetching met Promise.all
-  const [posts, tags] = await Promise.all([getPosts(tag), getTags()]);
+// ✅ Blog overzicht: parallel fetchen
+const [posts, tags] = await Promise.all([
+  getPosts(resolvedSearchParams?.tag as string | undefined),
+  getTags(),
+]);
 
-  // ❌ NIET dit doen (sequential):
-  // const posts = await getPosts(tag);
-  // const tags = await getTags();
-}
+// Blog detail: parallel fetchen van post + related
+const post = await getPostBySlug(slug);
+const [relatedPosts, headings] = await Promise.all([
+  getRelatedPosts(post._id, tagSlugs),
+  extractHeadings(post.body || ""),
+]);
 ```
 
-**Performance verschil:**
+**Performance verschil** bij blog overzicht:
 
-| Methode    | Tijd                          |
-| ---------- | ----------------------------- |
-| Sequential | 200ms + 150ms = **350ms**     |
-| Parallel   | max(200ms, 150ms) = **200ms** |
+| Methode      | Tijd                          |
+| ------------ | ----------------------------- |
+| Sequential   | 200ms + 150ms = **350ms**     |
+| Parallel     | max(200ms, 150ms) = **200ms** |
 
 **Saving: 43% sneller!** 🚀
 
 ---
 
-## 5. Image Optimization
-
-### Next.js Image Component
+## 6. Image Optimization
 
 ```tsx
-// Next.js config
+// next.config.ts
 images: {
   remotePatterns: [
-    {
-      protocol: "https",
-      hostname: "cdn.sanity.io",
-      pathname: "/images/**",
-    },
+    { protocol: "https", hostname: "cdn.sanity.io", pathname: "/images/**" },
+    { protocol: "https", hostname: "avatars.githubusercontent.com", pathname: "/u/**" },
   ],
   formats: ["image/avif", "image/webp"],
 }
-
-// Component gebruik
-<Image
-  src={urlFor(image).width(800).height(450).url()}
-  alt={post.title}
-  width={800}
-  height={450}
-  priority={index < 3} // First 3 images krijgen priority
-/>
 ```
 
 **Voordelen:**
-
-- ✅ **Automatische format conversie**: AVIF → WebP → JPEG fallback
-- ✅ **Responsive images**: Juiste grootte per viewport
-- ✅ **Lazy loading**: Alleen laden als in viewport
-- ✅ **Priority flag**: Critical images laden eerst
-- ✅ **CDN optimization**: Sanity CDN voor image serving
+- ✅ **Automatische format conversie** — AVIF → WebP → JPEG
+- ✅ **Sanity CDN** voor image serving
+- ✅ **Responsive images** via `@sanity/image-url`
+- ✅ **`priority` prop** voor boven-the-fold afbeeldingen
 
 ---
 
-## 6. Force Dynamic voor Protected Routes
-
-### Admin Page
+## 7. Gecentraliseerde Data Fetching
 
 ```tsx
-// Force dynamic rendering - this page requires authentication
-export const dynamic = "force-dynamic";
-
-export default async function AdminPage() {
-  const user = await getCurrentUser();
-  // ...
-}
-```
-
-**Waarom?**
-
-- ✅ **Altijd fresh data**: Geen caching voor auth state
-- ✅ **Security**: Server-side auth checks elke request
-- ✅ **User-specific content**: Verschillende data per user
-
-**Route Segment Config Options:**
-
-| Config           | Gebruik              | Wanneer          |
-| ---------------- | -------------------- | ---------------- |
-| `force-dynamic`  | Altijd server render | Auth, user data  |
-| `force-static`   | Altijd static        | Public pages     |
-| `revalidate: 60` | ISR met 60s cache    | Blog posts, tags |
-
----
-
-## 7. Async SearchParams (Next.js 15)
-
-### Voor (Next.js 14)
-
-```tsx
-// ❌ Deprecated in Next.js 15
-export default function Page({ searchParams }) {
-  const tag = searchParams.tag; // Synchronous
-}
-```
-
-### Na (Next.js 15+)
-
-```tsx
-// ✅ Correct in Next.js 15+
-export default async function Page({ searchParams }: PageProps) {
-  const resolvedSearchParams = await searchParams;
-  const tag = resolvedSearchParams?.tag;
-}
-```
-
-**Waarom async?**
-
-Next.js 15 maakt searchParams async om:
-
-- ✅ **Streaming support**: Partial Prerendering
-- ✅ **Better performance**: Non-blocking rendering
-- ✅ **Future-proof**: Voorbereid op React Server Components evolutie
-
----
-
-## 8. Centralized Data Fetching
-
-### lib/sanity.ts
-
-```tsx
+// lib/sanity.ts — centrale data fetching laag
 import "server-only"; // ✅ Voorkomt client-side gebruik
 
-/**
- * getPosts - Fetch alle posts from Sanity CMS
- */
 export async function getPosts(tag?: string | null) {
   const { data } = await sanityFetch({
     query: allPostsQuery,
@@ -324,35 +212,35 @@ export async function getPosts(tag?: string | null) {
 ```
 
 **Voordelen:**
+- ✅ **DRY** — Eén plek voor alle Sanity queries
+- ✅ **Type-safe** — TypeScript types gegenereerd via `sanity typegen`
+- ✅ **Server-only** — `import "server-only"` voorkomt client usage
+- ✅ **Request memoization** — Next.js dedupliceert automatisch
 
-- ✅ **DRY**: Eén plek voor data fetching logic
-- ✅ **Type-safe**: TypeScript types voor alle queries
-- ✅ **Server-only**: `import "server-only"` voorkomt client usage
-- ✅ **Reusable**: Dezelfde functies in pages en components
+---
+
+## 8. Async SearchParams (Next.js 15+)
+
+```tsx
+// ✅ Correct: searchParams is async in Next.js 15+
+export default async function Page({ searchParams }: PageProps) {
+  const resolvedSearchParams = await searchParams;
+  const tag = resolvedSearchParams?.tag as string | undefined;
+}
+```
 
 ---
 
 ## Performance Metrics
 
-### Lighthouse Scores (Verwacht)
+### Verwacht (Lighthouse)
 
-Met deze optimalisaties verwachten we:
-
-| Metric                   | Voor | Na   | Verbetering |
-| ------------------------ | ---- | ---- | ----------- |
-| Performance              | 75   | 95+  | +27%        |
-| First Contentful Paint   | 1.8s | 0.8s | -56%        |
-| Largest Contentful Paint | 3.2s | 1.2s | -63%        |
-| Time to Interactive      | 4.5s | 1.5s | -67%        |
-| SEO                      | 85   | 100  | +18%        |
-
-### Core Web Vitals
-
-| Metric                         | Target  | Status |
-| ------------------------------ | ------- | ------ |
-| LCP (Largest Contentful Paint) | < 2.5s  | ✅     |
-| FID (First Input Delay)        | < 100ms | ✅     |
-| CLS (Cumulative Layout Shift)  | < 0.1   | ✅     |
+| Metric                   | Schatting |
+| ------------------------ | --------- |
+| Performance              | 90+       |
+| First Contentful Paint   | ~1.0s     |
+| Largest Contentful Paint | ~1.5s     |
+| SEO                      | 100       |
 
 ---
 
@@ -360,78 +248,66 @@ Met deze optimalisaties verwachten we:
 
 ### ✅ Geïmplementeerd
 
-- [x] Request Memoization (automatisch in Next.js 15+)
-- [x] `generateStaticParams` voor SSG
-- [x] ISR met `revalidate: 60`
-- [x] Enhanced metadata met OpenGraph
+- [x] Request Memoization (automatisch in Next.js 16)
+- [x] Dynamic rendering voor live content
+- [x] ISR voor blog overzicht (3600s fallback)
+- [x] Enhanced metadata met Open Graph + Twitter Cards
+- [x] JSON-LD gestructureerde data (WebSite, Article, Breadcrumb)
 - [x] Parallel data fetching met `Promise.all`
-- [x] Image optimization met next/image
-- [x] `force-dynamic` voor protected routes
+- [x] Image optimization via `next/image` + Sanity CDN
 - [x] Async searchParams handling
-- [x] Centralized data fetching
-- [x] Server-only code protection
+- [x] Gecentraliseerde data fetching (`lib/sanity.ts`)
+- [x] Server-only code protection (`import "server-only"`)
 - [x] TypeScript strict mode
-- [x] Proper error boundaries
+- [x] Canonical URLs voor alle pagina's
+- [x] Dynamische sitemap (`app/sitemap.ts`)
+- [x] Robots.txt (`app/robots.ts`)
+
+### ⚙️ Taint API (Security)
+
+```tsx
+// next.config.ts
+experimental: {
+  taint: true, // Voorkomt dat server-only values naar de client lekken
+},
+```
+
+De **Taint API** markeert server-only data zodat Next.js een error gooit als deze per ongeluk naar de client wordt gestuurd. Dit is een extra beveiligingslaag bovenop `import "server-only"`.
 
 ### 🔄 Toekomstige Optimalisaties
 
 - [ ] Suspense boundaries voor streaming
-- [ ] Partial Prerendering (PPR) - Experimental
-- [ ] React Server Actions voor mutations
-- [ ] Optimistic UI updates
+- [ ] Partial Prerendering (PPR) — Experimental
 - [ ] Service Worker voor offline support
+- [ ] Font subsetting optimalisatie
 
 ---
 
 ## Testing Performance
 
-### Development
-
 ```bash
-# Development server
+# Development
 bun run dev
 
-# Check console voor:
-# - Fetch request deduplication logs
-# - Static generation warnings
-```
+# Production build — check route markers:
+# ○ Static   (build time pre-rendered)
+# ⊙ ISR      (incremental static regeneration)
+# λ Dynamic  (server-rendered per request)
+bun run build && bun run start
 
-### Production Build
-
-```bash
-# Build voor productie
-bun run build
-
-# Check build output:
-# ○ Static  (build time pre-rendered)
-# ⊙ ISR     (incremental static regeneration)
-# λ Dynamic (server-rendered per request)
-
-# Start productie server
-bun run start
-```
-
-### Lighthouse Analysis
-
-```bash
-# Chrome DevTools → Lighthouse
-# - Performance
-# - Accessibility
-# - Best Practices
-# - SEO
+# Lighthouse analyse via Chrome DevTools
 ```
 
 ---
 
 ## Conclusie
 
-Door deze Next.js 15/16 best practices te implementeren hebben we:
+Deze optimalisaties zorgen voor:
 
-1. ✅ **Dubbele fetches geëlimineerd** met automatic request memoization
-2. ✅ **Page load times verbeterd** met SSG + ISR
-3. ✅ **SEO geoptimaliseerd** met enhanced metadata
-4. ✅ **Images geoptimaliseerd** met next/image en moderne formats
-5. ✅ **Code kwaliteit verbeterd** met TypeScript en proper typing
-6. ✅ **Future-proof** voor Next.js 16+ features
+1. ✅ **Snelle laadtijden** — Dynamic rendering + parallel fetching
+2. ✅ **SEO optimalisatie** — Enhanced metadata + JSON-LD + canonical URLs
+3. ✅ **Live content** — Sanity webhooks + real-time updates
+4. ✅ **Code kwaliteit** — TypeScript, centralized fetching, server-only
+5. ✅ **Future-proof** — Next.js 16 patterns
 
-**Result: Een blazing fast, SEO-friendly, production-ready blog applicatie! 🚀**
+**Resultaat:** Een snelle, SEO-vriendelijke blog met live content updates! 🚀

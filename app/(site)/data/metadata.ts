@@ -1,17 +1,18 @@
 import type { Metadata } from "next";
+import { SITE_URL } from "@/lib/constants";
 
 /**
- * Site Metadata - Centrale configuratie voor SEO en metadata
+ * Site Metadata — Centrale configuratie voor SEO en metadata
  *
  * Pas deze waarden aan om de site metadata te updaten.
- * Wordt gebruikt in layout.tsx
+ * Wordt gebruikt in layout.tsx als basis voor alle pagina's.
  */
 
 /** Basis site informatie */
 export const siteConfig = {
   name: "Stageblog",
   author: "Hamed Sadim",
-  url: "https://stageblog.vercel.app", //! Pas aan naar je echte URL
+  url: SITE_URL,
   locale: "nl_BE",
 };
 
@@ -33,8 +34,14 @@ export const descriptions = {
 };
 
 /**
- * Genereer de complete metadata voor de site
- * @returns Metadata object voor Next.js
+ * Genereer de basis metadata voor de site
+ *
+ * Wordt in de root layout geïmporteerd als fallback voor alle pagina's.
+ * Elke pagina kan dit overschrijven met eigen generateMetadata() voor specifieke
+ * titels, beschrijvingen, canonical URLs en Open Graph data.
+ *
+ * @returns Metadata object met basis SEO configuratie
+ * @see Metadata — Next.js metadata type
  */
 export const generateSiteMetadata = (): Metadata => ({
   metadataBase: new URL(siteConfig.url),
@@ -50,13 +57,23 @@ export const generateSiteMetadata = (): Metadata => ({
     icon: "/icon.png",
     apple: "/icon.png",
   },
+  alternates: {
+    canonical: siteConfig.url,
+  },
   openGraph: {
     title: `${siteConfig.name} | ${siteConfig.author}`,
     description: descriptions.short,
     type: "website",
     locale: siteConfig.locale,
     siteName: siteConfig.name,
-    images: ["/icon.png"],
+    images: [
+      {
+        url: "/icon.png",
+        width: 512,
+        height: 512,
+        alt: siteConfig.name,
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",

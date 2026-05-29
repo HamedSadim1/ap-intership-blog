@@ -22,7 +22,7 @@ export const descriptionData = {
 /** Portfolio button configuratie */
 export const portfolioButtonData = {
   href: "/blog",
-  label: "Bekijk mijn verslagen",
+  label: "Bekijk mijn blogs",
   external: false,
 };
 

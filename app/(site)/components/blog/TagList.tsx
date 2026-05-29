@@ -1,8 +1,13 @@
 /**
- * TagList Component
+ * TagList — Toont tags als klikbare badges of statische labels
  *
- * Herbruikbare component voor het weergeven van blog post tags.
- * Gebruikt shared tag styling utilities volgens DRY principe.
+ * Tags worden gedupliceerd op _id om duplicate key errors te voorkomen.
+ * Gebruikt getTagClassName uit shared tag-styles utility voor consistente styling.
+ *
+ * @param tags - Array van tag objecten uit Sanity (kan null zijn)
+ * @param variant - "default" (normal) of "compact" (kleiner, voor cards)
+ * @param clickable - Of tags als Link naar /blog?tag=... renderen (default: true)
+ * @returns Tag badges in een flex-wrap container, of null bij lege input
  *
  * @example
  * <TagList tags={post.tags} />
@@ -16,8 +21,11 @@ import { getTagClassName } from "@/lib/utils/tag-styles";
 type Tags = NonNullable<PostBySlugQueryResult>["tags"];
 
 interface TagListProps {
+  /** Array van tag objecten uit Sanity */
   tags: Tags;
+  /** "default" (normal) of "compact" (kleiner, voor cards) */
   variant?: "default" | "compact";
+  /** Of tags als Link naar /blog?tag=... renderen (default: true) */
   clickable?: boolean;
 }
 

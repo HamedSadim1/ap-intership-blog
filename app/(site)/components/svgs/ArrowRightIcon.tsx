@@ -1,14 +1,15 @@
-/**
- * Gedeelde props interface voor alle icoon componenten
- * @property className - Tailwind classes voor grootte, kleur, etc.
- */
 interface IconProps {
+  /** Tailwind classes voor grootte, kleur, etc. */
   className?: string;
 }
 
 /**
- * ArrowRightIcon - Pijl naar rechts icoon
- * Vaak gebruikt voor CTA buttons en navigatie elementen
+ * ArrowRightIcon — Pijl naar rechts
+ *
+ * Gebruikt voor CTA buttons en navigatie-elementen.
+ *
+ * @param className - Tailwind classes voor grootte, kleur (default: geen)
+ * @returns SVG element
  *
  * @example
  * <ArrowRightIcon className="w-5 h-5 text-white" />

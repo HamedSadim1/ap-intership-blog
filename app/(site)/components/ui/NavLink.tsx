@@ -13,6 +13,9 @@ import {
 
 /**
  * Props voor NavLink component
+ * @property item - Navigatie item met label, href, iconName
+ * @property variant - Weergave variant (desktop: underline effect, mobile: glass background)
+ * @property onClick - Optionele click handler (bijv. menu sluiten op mobiel)
  */
 interface NavLinkProps {
   item: NavItem;
@@ -21,8 +24,16 @@ interface NavLinkProps {
 }
 
 /**
- * NavLink - Navigationele link met active state styling
- * Gebruikt shared style utilities volgens DRY principe
+ * NavLink - Navigatie link met active state herkenning en animatie
+ *
+ * Gebruikt usePathname() om de huidige route te detecteren en de active state te bepalen.
+ * Desktop variant toont een underline hover/active effect.
+ * Mobile variant gebruikt glass background voor active state.
+ * Maakt gebruik van shared style utilities volgens DRY principe.
+ *
+ * @example
+ * <NavLink item={{ label: "Home", href: "/", iconName: "home" }} />
+ * <NavLink item={item} variant="mobile" onClick={() => setIsOpen(false)} />
  */
 const NavLink = ({ item, variant = "desktop", onClick }: NavLinkProps) => {
   const pathname = usePathname();

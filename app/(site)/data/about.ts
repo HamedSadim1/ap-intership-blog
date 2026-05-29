@@ -43,21 +43,25 @@ export const learningGoalsData = {
   goals: [
     {
       title: "Technische Vaardigheden",
+      icon: "💻",
       description:
         "Verdiepen in moderne web technologieën en frameworks die in de praktijk worden gebruikt.",
     },
     {
       title: "Professionele Groei",
+      icon: "📈",
       description:
         "Ontwikkelen van communicatie, samenwerking en probleemoplossend vermogen in een teamomgeving.",
     },
     {
       title: "Zelfreflectie",
+      icon: "🪞",
       description:
         "Bewust reflecteren op mijn leerproces en persoonlijke ontwikkeling documenteren.",
     },
     {
       title: "Praktijkervaring",
+      icon: "🔧",
       description:
         "Theorie omzetten naar praktijk en leren van real-world projecten en uitdagingen.",
     },
@@ -84,7 +88,7 @@ export const linksData = {
     },
     {
       href: "/blog",
-      label: "Stage Verslagen",
+      label: "Bekijk Blogs",
       external: false,
       variant: "secondary" as const,
     },

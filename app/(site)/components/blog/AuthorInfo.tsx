@@ -6,6 +6,12 @@ import type { PostBySlugQueryResult } from "@/sanity/types";
 type Author = NonNullable<PostBySlugQueryResult>["author"];
 type PublishedAt = string;
 
+/**
+ * Props voor AuthorInfo component
+ * @property author - Sanity author object (kan null zijn — component toont dan niets)
+ * @property publishedAt - ISO datum string voor publicatie datum
+ * @property compact - Compacte weergave voor blog cards (default: false)
+ */
 interface AuthorInfoProps {
   author: Author;
   publishedAt: PublishedAt;
@@ -13,10 +19,18 @@ interface AuthorInfoProps {
 }
 
 /**
- * AuthorInfo - Display author avatar, name, and publish date
+ * AuthorInfo - Weergave van auteur avatar, naam en publicatie datum
  *
- * Reusable component for both blog listing cards and post detail pages.
- * Supports compact mode for smaller displays.
+ * Herbruikbaar voor zowel blog cards (compact mode) als post detail pagina's.
+ * Toont automatisch niets als er geen auteur is (guard clause).
+ *
+ * @example
+ * // Post detail (vol formaat)
+ * <AuthorInfo author={post.author} publishedAt={post.published_at} />
+ *
+ * @example
+ * // Blog card (compact)
+ * <AuthorInfo author={post.author} publishedAt={post.published_at} compact />
  */
 export function AuthorInfo({
   author,

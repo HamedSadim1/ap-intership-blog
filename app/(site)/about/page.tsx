@@ -16,44 +16,100 @@ import {
   contactData,
   linksData,
 } from "../data";
+import { GLASS_CLASSES, ROUNDED_CLASSES, TRANSITION_CLASSES, HOVER_CLASSES, cn } from "@/lib/utils/styles";
+import { SITE_EMAIL, SITE_URL } from "@/lib/constants";
+import {
+  generatePersonSchema,
+  generateBreadcrumbSchema,
+} from "@/lib/json-ld";
+import { PageHeader, PageLayout } from "../components/ui";
 
 /**
  * Metadata for About page
+ * Bevat een profiel-OG type voor betere social weergave.
  */
 export const metadata: Metadata = {
   title: "Over Mij | Stage Portfolio",
   description:
     "Student Graduaat Programmeren met passie voor webdevelopment en innovatieve technologieën.",
+  alternates: {
+    canonical: `${SITE_URL}/about`,
+  },
   openGraph: {
     title: "Over Mij | Stage Portfolio",
     description:
       "Student Graduaat Programmeren met passie voor webdevelopment en innovatieve technologieën.",
     type: "profile",
+    url: `${SITE_URL}/about`,
+    images: [
+      {
+        url: "/icon.png",
+        width: 512,
+        height: 512,
+        alt: "Over Mij",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Over Mij | Stage Portfolio",
+    description:
+      "Student Graduaat Programmeren met passie voor webdevelopment en innovatieve technologieën.",
+    images: ["/icon.png"],
   },
 };
 
 /**
- * About Page - Static content page
+ * About Page — Over mij pagina met persoonlijke informatie
+ *
+ * Toont een profielfoto, persoonlijke informatie, stagebedrijf details,
+ * leerdoelen in een grid, contactgegevens en relevante links.
+ * @returns Volledige about pagina met alle secties
  */
 export default function AboutPage() {
   return (
-    <div className="bg-background relative min-h-screen pt-24 pb-16 overflow-x-hidden">
+    <PageLayout className="pt-28 overflow-clip">
+      {/* JSON-LD: Person schema voor de auteur */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(
+            generatePersonSchema("Hamed Sadim", {
+              jobTitle: "Student Graduaat Programmeren — Stagiair bij Adomate",
+              email: SITE_EMAIL,
+              url: `${SITE_URL}/about`,
+              sameAs: [
+                "https://hamedsadim-portfolio.vercel.app/",
+              ],
+            }),
+          ),
+        }}
+      />
+      {/* JSON-LD: BreadcrumbList voor navigatiepad */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(
+            generateBreadcrumbSchema([
+              { position: 1, name: "Home", item: SITE_URL },
+              { position: 2, name: "Over Mij", item: `${SITE_URL}/about` },
+            ]),
+          ),
+        }}
+      />
       {/* Header */}
-      <header className="text-center mb-12 px-4">
+      <PageHeader
+        title={aboutHeaderData.title}
+        subtitle={aboutHeaderData.subtitle}
+        showDivider={false}
+      >
         <ProfileHeader
           src={profilePhotoData.src}
           alt={profilePhotoData.alt}
           name={profilePhotoData.name}
           role={profilePhotoData.role}
         />
-
-        <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-          {aboutHeaderData.title}
-        </h1>
-        <p className="text-white/70 text-lg max-w-2xl mx-auto">
-          {aboutHeaderData.subtitle}
-        </p>
-      </header>
+      </PageHeader>
 
       <div className="max-w-4xl mx-auto px-4 space-y-8">
         {/* Persoonlijke Info */}
@@ -66,7 +122,7 @@ export default function AboutPage() {
           title={companyData.title}
           icon={<BuildingIcon className="w-6 h-6 text-yellow-300" />}
         >
-          <p className="text-white/80 leading-relaxed mb-4">
+          <p className="text-white/90 leading-relaxed mb-4">
             {companyData.description}
           </p>
           <ExternalLink href={companyData.link.href} external>
@@ -82,6 +138,7 @@ export default function AboutPage() {
                 key={index}
                 title={goal.title}
                 description={goal.description}
+                icon={goal.icon}
               />
             ))}
           </div>
@@ -89,14 +146,23 @@ export default function AboutPage() {
 
         {/* Contact */}
         <InfoSection title={contactData.title}>
-          <p className="text-white/80 leading-relaxed mb-4">
+          <p className="text-white/90 leading-relaxed mb-5">
             {contactData.description}
           </p>
           <a
             href={`mailto:${contactData.email}`}
-            className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 text-white rounded-lg font-medium transition-all duration-300 hover:scale-105 hover:shadow-lg cursor-pointer"
+            className={cn(
+              "group inline-flex items-center gap-3 px-6 py-3.5 text-white font-medium cursor-pointer",
+              "hover:bg-white/20 hover:border-white/30",
+              GLASS_CLASSES.light,
+              GLASS_CLASSES.borderLight,
+              ROUNDED_CLASSES.lg,
+              TRANSITION_CLASSES.mediumEase,
+              HOVER_CLASSES.scale,
+              HOVER_CLASSES.glow,
+            )}
           >
-            <span>✉️</span>
+            <span className="text-xl group-hover:scale-110 transition-transform">✉️</span>
             <span>{contactData.email}</span>
           </a>
         </InfoSection>
@@ -117,6 +183,6 @@ export default function AboutPage() {
           </div>
         </InfoSection>
       </div>
-    </div>
+    </PageLayout>
   );
 }

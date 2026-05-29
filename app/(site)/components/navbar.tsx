@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { navbarConfig, NavItem } from "../data";
 import { NavLink, NavBrand, MobileMenuButton } from "./ui";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
 
 /**
  * Props voor Navbar component
@@ -17,24 +18,15 @@ interface NavbarProps {
 }
 
 /**
- * Navbar - Glasmorphism navigatiebalk
+ * Navbar - Navigatiebalk met shadcn/ui Sheet voor mobiel menu
+ *
+ * Bewust statisch (geen scroll-state) om flicker door backdrop-filter te voorkomen.
+ * Gebruikt will-change: transform voor GPU compositor layer.
  *
  * Features:
- * - Glass effect passend bij het thema
- * - Responsive met mobiel hamburger menu
- * - Smooth animaties
+ * - Glass effect met transparante achtergrond (geen backdrop-blur — veroorzaakt scroll flicker)
+ * - shadcn/ui Sheet voor mobiel menu (scroll lock, Escape key, focus trapping inbegrepen)
  * - Volledig configureerbaar via props of data file
- *
- * @example
- * // Standaard met data uit navbar.ts
- * <Navbar />
- *
- * @example
- * // Met custom items
- * <Navbar
- *   brandName="Mijn Site"
- *   items={[{ label: "Home", href: "/" }, { label: "About", href: "/about" }]}
- * />
  */
 const Navbar = ({
   brandName = navbarConfig.brandName,
@@ -43,13 +35,15 @@ const Navbar = ({
 }: NavbarProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const toggleMenu = () => setIsOpen(!isOpen);
-  const closeMenu = () => setIsOpen(false);
-
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 px-4 py-4 ${className}`}>
-      <div className="max-w-6xl mx-auto ">
-        <div className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-2xl px-6 py-4 shadow-lg">
+    <nav
+      className={`relative z-50 px-4 ${className}`}
+      style={{ willChange: "transform" }}
+    >
+      <div className="max-w-6xl mx-auto">
+        <div
+          className="border border-white/20 rounded-2xl px-6 bg-white/15 shadow-lg py-4"
+        >
           <div className="flex items-center justify-between">
             {/* Logo/Brand */}
             <NavBrand>{brandName}</NavBrand>
@@ -62,28 +56,32 @@ const Navbar = ({
             </div>
 
             {/* Mobile Menu Button */}
-            <MobileMenuButton isOpen={isOpen} onClick={toggleMenu} />
-          </div>
-
-          {/* Mobile Navigation */}
-          <div
-            className={`md:hidden overflow-hidden transition-all duration-300 ${
-              isOpen ? "max-h-96 mt-4 pt-4 border-t border-white/10" : "max-h-0"
-            }`}
-          >
-            <div className="flex flex-col gap-4">
-              {items.map((item) => (
-                <NavLink
-                  key={item.href}
-                  item={item}
-                  variant="mobile"
-                  onClick={closeMenu}
-                />
-              ))}
-            </div>
+            <MobileMenuButton
+              isOpen={isOpen}
+              onClick={() => setIsOpen(!isOpen)}
+            />
           </div>
         </div>
       </div>
+
+      {/* shadcn/ui Sheet — scroll lock, Escape key, focus trapping, click-outside inbegrepen */}
+      <Sheet open={isOpen} onOpenChange={setIsOpen}>
+        <SheetContent
+          side="right"
+          className="w-70 max-w-[85vw] border-l border-white/20 bg-linear-to-br from-blue-500 via-purple-500 to-pink-500 text-white p-6 pt-16"
+        >
+          <nav className="flex flex-col gap-3 mt-4">
+            {items.map((item) => (
+              <NavLink
+                key={item.href}
+                item={item}
+                variant="mobile"
+                onClick={() => setIsOpen(false)}
+              />
+            ))}
+          </nav>
+        </SheetContent>
+      </Sheet>
     </nav>
   );
 };

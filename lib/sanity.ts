@@ -6,11 +6,13 @@ import {
   allPostsQuery,
   postBySlugQuery,
   allTagsQuery,
+  relatedPostsQuery,
 } from "@/sanity/lib/queries";
 import {
   AllPostsQueryResult,
   PostBySlugQueryResult,
   AllTagsQueryResult,
+  RelatedPostsQueryResult,
 } from "@/sanity/types";
 
 /**
@@ -77,9 +79,37 @@ export async function getTags() {
 }
 
 /**
+ * getRelatedPosts - Fetch gerelateerde posts op basis van gedeelde tags
+ *
+ * Vindt maximaal 3 posts die minimaal één tag delen met de huidige post,
+ * gesorteerd op publicatiedatum (nieuwste eerst).
+ * Excludeert de huidige post via _id.
+ *
+ * @param currentId - _id van de huidige post (wordt uitgesloten)
+ * @param tagSlugs - Array van tag slug strings van de huidige post
+ * @param limit - Maximaal aantal resultaten (default: 3)
+ * @returns Promise met gerelateerde posts
+ */
+export async function getRelatedPosts(
+  currentId: string,
+  tagSlugs: string[],
+  limit = 3,
+): Promise<RelatedPostsQueryResult> {
+  if (tagSlugs.length === 0) return [];
+  const data = await client.fetch<RelatedPostsQueryResult>(
+    relatedPostsQuery,
+    { currentId, tagSlugs, limit },
+  );
+  return data;
+}
+
+/**
  * Type exports voor fetch return types
  * Gebruik deze types voor type-safe component props
  */
 export type PostsData = AllPostsQueryResult;
 export type PostData = PostBySlugQueryResult;
 export type TagsData = AllTagsQueryResult;
+export type RelatedPost = NonNullable<
+  Awaited<ReturnType<typeof getRelatedPosts>>[number]
+>;

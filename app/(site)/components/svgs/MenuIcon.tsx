@@ -1,14 +1,15 @@
-/**
- * Gedeelde props interface voor alle icoon componenten
- * @property className - Tailwind classes voor grootte, kleur, etc.
- */
 interface IconProps {
+  /** Tailwind classes voor grootte, kleur, etc. */
   className?: string;
 }
 
 /**
- * MenuIcon - Hamburger menu icoon (3 horizontale lijnen)
- * Gebruikt voor mobiele navigatie menu toggle
+ * MenuIcon — Hamburger menu (3 horizontale lijnen)
+ *
+ * Gebruikt in MobileMenuButton voor mobiele navigatie toggle.
+ *
+ * @param className - Tailwind classes voor grootte, kleur (default: geen)
+ * @returns SVG element
  *
  * @example
  * <MenuIcon className="w-6 h-6 text-white" />

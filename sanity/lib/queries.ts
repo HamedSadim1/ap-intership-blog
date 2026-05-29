@@ -12,8 +12,8 @@ export const allPostsQuery =
   featured_image,
   status,
   is_featured,
-  published_at
-  ,
+  published_at,
+  body,
   author-> {
     _id,
     username,
@@ -56,4 +56,26 @@ export const allTagsQuery = defineQuery(`*[_type == "tag"] | order(name asc) {
   _id,
   name,
   slug,
+}`);
+
+export const relatedPostsQuery =
+  defineQuery(`*[_type == "post" && status == "published" && _id != $currentId && count((tags[]->slug.current)[@ in $tagSlugs]) > 0] | order(published_at desc) [0...$limit] {
+  _id,
+  title,
+  slug,
+  excerpt,
+  featured_image,
+  published_at,
+  body,
+  author-> {
+    _id,
+    username,
+    slug,
+    image,
+  },
+  tags[]-> {
+    _id,
+    name,
+    slug,
+  },
 }`);
