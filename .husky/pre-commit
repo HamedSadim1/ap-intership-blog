@@ -1,1 +1,6 @@
-bun run lint
+# Pre-commit checks
+# 1. Lint (ESLint)
+bun run lint &&
+
+# 2. TypeScript typecheck
+bunx tsc --noEmit
