@@ -298,10 +298,10 @@ export type AllPostsQueryResult = Array<{
     crop?: SanityImageCrop;
     _type: "image";
   } | null;
-  body: string | null;
   status: "archived" | "draft" | "published" | null;
   is_featured: boolean | null;
   published_at: string | null;
+  body: Markdown | null;
   author: {
     _id: string;
     username: string | null;
