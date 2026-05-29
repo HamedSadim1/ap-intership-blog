@@ -411,5 +411,6 @@ declare module "@sanity/client" {
     '*[_type == "post" && status == "published" && select(\n    defined($tag) => $tag in tags[]->slug.current,\n    true\n  )] | order(published_at desc) {\n  _id,\n  title,\n  slug,\n  excerpt,\n  featured_image,\n  status,\n  is_featured,\n  published_at,\n  body,\n  author-> {\n    _id,\n    username,\n    slug,\n    image,\n  },\n  tags[]-> {\n    _id,\n    name,\n    slug,\n  },\n}': AllPostsQueryResult;
     '*[_type == "post" && slug.current == $slug && status == "published"][0] {\n  _id,\n  title,\n  slug,\n  excerpt,\n  body,\n  featured_image,\n  status,\n  is_featured,\n  published_at,\n  author-> {\n    _id,\n    username,\n    slug,\n    image,\n},\n\n  tags[]-> {\n    _id,\n    name,\n    slug,\n},\n}': PostBySlugQueryResult;
     '*[_type == "tag"] | order(name asc) {\n  _id,\n  name,\n  slug,\n}': AllTagsQueryResult;
+    '*[_type == "post" && status == "published" && _id != $currentId && count((tags[]->slug.current)[@ in $tagSlugs]) > 0] | order(published_at desc) [0...$limit] {\n  _id,\n  title,\n  slug,\n  excerpt,\n  featured_image,\n  published_at,\n  body,\n  author-> {\n    _id,\n    username,\n    slug,\n    image,\n  },\n  tags[]-> {\n    _id,\n    name,\n    slug,\n  },\n}': RelatedPostsQueryResult;
   }
 }
