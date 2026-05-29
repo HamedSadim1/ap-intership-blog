@@ -1,6 +1,8 @@
 import {
   AuthorInfo,
+  BackToTopButton,
   CodeBlockEnhancer,
+  PostHeader,
   ReadingProgress,
   TableOfContents,
   TagList,
@@ -10,6 +12,8 @@ import Section from "@/app/(site)/components/ui/Section";
 import { DEFAULT_METADATA } from "@/lib/constants";
 import { getPostBySlug } from "@/lib/sanity";
 import { extractHeadings, renderMarkdown } from "@/lib/utils/markdown";
+import { formatDate } from "@/lib/utils/date";
+import { estimateReadingTime } from "@/lib/utils/reading-time";
 import type { PostBySlugQueryResult } from "@/sanity/types";
 import type { PageProps } from "@/types";
 import "highlight.js/styles/github-dark.css";
@@ -91,6 +95,35 @@ export const generateMetadata = async ({
  * in generateMetadata and this component results in only ONE fetch
  * during the same render pass. This is called "Request Memoization".
  */
+/** Mobile ToC met collapsible toggle */
+function MobileTocToggle({ headings }: { headings: { level: number; text: string; id: string }[] }) {
+  return (
+    <details className="lg:hidden mb-8 group">
+      <summary className="backdrop-blur-md bg-white/10 rounded-xl p-4 border border-white/20 cursor-pointer text-white font-medium flex items-center gap-2 hover:bg-white/15 transition-colors list-none">
+        <span>📑</span>
+        <span>Inhoudsopgave</span>
+        <svg className="w-4 h-4 ml-auto transition-transform group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+        </svg>
+      </summary>
+      <nav className="mt-2 backdrop-blur-md bg-white/5 rounded-xl p-4 border border-white/10">
+        <ul className="space-y-2">
+          {headings.map(({ level, text, id }) => (
+            <li key={id} style={{ marginLeft: `${(level - 2) * 0.75}rem` }}>
+              <a
+                href={`#${id}`}
+                className="text-white/70 hover:text-white text-sm transition-colors block py-1"
+              >
+                {text}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </details>
+  );
+}
+
 export default async function BlogPostPage({ params }: PageProps) {
   const resolvedParams = await params;
   const slug = resolvedParams?.slug;
@@ -108,39 +141,68 @@ export default async function BlogPostPage({ params }: PageProps) {
 
   const htmlContent = renderMarkdown(post.body || "");
   const headings = extractHeadings(post.body || "");
+  const readingTime = estimateReadingTime(post.body);
 
   return (
     <div className="bg-background relative min-h-screen pt-24 overflow-x-hidden">
       <ReadingProgress />
       <div className="max-w-7xl mx-auto p-4">
+        {/* Back link */}
         <Link
           href="/blog"
-          className="inline-flex items-center gap-2 mb-6 text-sm text-gray-400 hover:text-white transition-colors cursor-pointer"
+          className="inline-flex items-center gap-2 mb-6 text-sm text-white/60 hover:text-white transition-all duration-300 hover:gap-3 cursor-pointer group"
         >
-          <ArrowLeftIcon className="h-4 w-4" />
+          <span className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-white/20 transition-colors">
+            <ArrowLeftIcon className="h-4 w-4" />
+          </span>
           Terug naar blogs
         </Link>
 
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-8">
           {/* Main Content */}
-          <article>
-            {/* <PostHeader post={post} /> */}
+          <article className="animate-fade-in">
+            {/* Post Header - Featured image, title, excerpt */}
+            <PostHeader post={post} />
 
-            {post.author && post.published_at && (
-              <Link href="/about" className="cursor-pointer">
-                <div className="mb-8">
+            {/* Meta: auteur, datum en leestijd */}
+            <div className="flex flex-wrap items-center gap-4 mb-6 pb-6 border-b border-white/10">
+              {post.author && post.published_at && (
+                <Link href="/about" className="cursor-pointer">
                   <AuthorInfo
                     author={post.author}
                     publishedAt={post.published_at}
                   />
-                </div>
-              </Link>
-            )}
+                </Link>
+              )}
+              <span className="text-white/30 hidden sm:inline">|</span>
+              <span className="text-white/50 text-sm flex items-center gap-1.5">
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6l4 2" />
+                  <circle cx="12" cy="12" r="10" />
+                </svg>
+                {readingTime}
+              </span>
+              {post.published_at && (
+                <span className="text-white/50 text-sm flex items-center gap-1.5">
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  {formatDate(post.published_at)}
+                </span>
+              )}
+            </div>
 
-            <div className="mb-8">
+            {/* Tags */}
+            <div className="mb-8 animate-fade-in">
               <TagList tags={post.tags} />
             </div>
 
+            {/* Mobile ToC toggle */}
+            {headings.length > 0 && (
+              <MobileTocToggle headings={headings} />
+            )}
+
+            {/* Content */}
             <Section variant="ghost" className="p-0!">
               <div
                 className="prose prose-invert prose-lg max-w-none"
@@ -148,14 +210,28 @@ export default async function BlogPostPage({ params }: PageProps) {
               />
               <CodeBlockEnhancer />
             </Section>
+
+            {/* Back to top */}
+            <div className="mt-12 text-center animate-fade-in">
+              <Link
+                href="/blog"
+                className="inline-flex items-center gap-2 text-sm text-white/40 hover:text-white transition-colors"
+              >
+                <ArrowLeftIcon className="h-4 w-4" />
+                Terug naar alle blogs
+              </Link>
+            </div>
           </article>
 
           {/* Sidebar - Table of Contents */}
           <aside className="hidden lg:block">
-            <TableOfContents headings={headings} />
+            <TableOfContents headings={headings} readingTime={readingTime} />
           </aside>
         </div>
       </div>
+
+      {/* Back to top button (mobile) */}
+      <BackToTopButton />
     </div>
   );
 }

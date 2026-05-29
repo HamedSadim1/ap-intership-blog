@@ -12,8 +12,8 @@ export const allPostsQuery =
   featured_image,
   status,
   is_featured,
-  published_at
-  ,
+  published_at,
+  body,
   author-> {
     _id,
     username,

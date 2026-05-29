@@ -17,9 +17,11 @@ interface Heading {
 /**
  * Props voor TableOfContents component
  * @property headings - Array van alle headings uit de markdown content
+ * @property readingTime - Optionele leestijd om in de sidebar te tonen
  */
 interface TableOfContentsProps {
   headings: Heading[];
+  readingTime?: string;
 }
 
 /**
@@ -34,7 +36,7 @@ interface TableOfContentsProps {
  * GEBRUIK:
  * <TableOfContents headings={extractedHeadings} />
  */
-export function TableOfContents({ headings }: TableOfContentsProps) {
+export function TableOfContents({ headings, readingTime }: TableOfContentsProps) {
   // State: houdt de ID bij van de heading die momenteel in beeld is
   const [activeId, setActiveId] = useState<string>("");
 
@@ -145,6 +147,17 @@ export function TableOfContents({ headings }: TableOfContentsProps) {
             Inhoudsopgave
           </h3>
         </div>
+
+        {/* Leestijd badge */}
+        {readingTime && (
+          <div className="mb-4 flex items-center gap-2 text-white/50 text-xs">
+            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6l4 2" />
+              <circle cx="12" cy="12" r="10" />
+            </svg>
+            {readingTime}
+          </div>
+        )}
 
         {/* Lijst van alle headings */}
         <ul className="space-y-2.5">

@@ -7,6 +7,10 @@ import Link from "next/link";
 import { AuthorInfo, TagList } from "@/app/(site)/components/blog";
 import type { PageProps } from "@/types";
 import { DEFAULT_METADATA } from "@/lib/constants";
+import { getRelativeTime } from "@/lib/utils/date";
+import { estimateReadingTime } from "@/lib/utils/reading-time";
+
+const SEVEN_DAYS_AGO = Date.now() - 7 * 24 * 60 * 60 * 1000;
 
 /**
  * Live Content API with smart tag-based revalidation
@@ -51,13 +55,16 @@ export default async function BlogPage({ searchParams }: PageProps) {
   return (
     <div className="bg-background relative min-h-screen pt-24 pb-16 overflow-x-hidden">
       {/* Header Section */}
-      <header className="text-center mb-12 px-4">
-        <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-          Stage Portfolio
+      <header className="text-center mb-12 px-4 animate-fade-in">
+        <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 leading-tight">
+          <span className="bg-linear-to-r from-yellow-200 via-pink-200 to-cyan-200 bg-clip-text text-transparent gradient-text-shimmer">
+            Stage Portfolio
+          </span>
         </h1>
         <p className="text-white/70 text-lg max-w-2xl mx-auto">
           Mijn ervaringen, reflecties en groei tijdens de stageperiode
         </p>
+        <div className="mt-6 mx-auto w-24 h-1 bg-linear-to-r from-blue-400 via-purple-400 to-pink-400 rounded-full" />
       </header>
 
       {/* Tag Filter */}
@@ -68,17 +75,27 @@ export default async function BlogPage({ searchParams }: PageProps) {
       {/* Posts Grid */}
       <div className="max-w-6xl mx-auto px-4">
         {posts.length === 0 ? (
-          <div className="text-center py-16">
+          <div className="text-center py-16 animate-fade-in">
+            <div className="text-6xl mb-6">🔍</div>
             <p className="text-white/60 text-lg">
               Geen artikelen gevonden{tag ? ` voor tag "${tag}"` : ""}.
+            </p>
+            <p className="text-white/40 text-sm mt-2">
+              Probeer een andere tag of kom later terug.
             </p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {posts.map((post, index) => (
+            {posts.map((post, index) => {
+              const isNew = post.published_at
+                ? new Date(post.published_at).getTime() > SEVEN_DAYS_AGO
+                : false;
+
+              return (
               <article
                 key={post._id}
-                className="group bg-white/10 backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"
+                className="group bg-white/10 backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 hover:shadow-purple-500/20 animate-card"
+                style={{ animationDelay: `${index * 0.08}s` }}
               >
                 <Link
                   href={`/blog/${post.slug?.current}`}
@@ -96,28 +113,40 @@ export default async function BlogPage({ searchParams }: PageProps) {
                         width={800}
                         height={450}
                         priority={index < 3}
-                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                       />
                     ) : (
-                      <div className="w-full h-full bg-linear-to-br from-purple-500/30 to-pink-500/30 flex items-center justify-center">
-                        <span className="text-white/40 text-4xl">📝</span>
+                      <div className="w-full h-full bg-linear-to-br from-blue-500/20 via-purple-500/20 to-pink-500/20 flex items-center justify-center">
+                        <span className="text-white/30 text-5xl">📝</span>
                       </div>
+                    )}
+                    {isNew && (
+                      <span className="absolute top-3 right-3 bg-linear-to-r from-green-400 to-emerald-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg animate-scale-in">
+                        Nieuw!
+                      </span>
                     )}
                   </div>
 
                   {/* Content */}
                   <div className="p-5">
                     {/* Tags */}
-                    <div className="mb-3">
+                    <div className="flex items-center justify-between gap-2 mb-3">
                       <TagList
                         tags={post.tags?.slice(0, 2) || null}
                         variant="compact"
                         clickable={false}
                       />
+                      <span className="text-white/40 text-xs whitespace-nowrap flex items-center gap-1">
+                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6l4 2" />
+                          <circle cx="12" cy="12" r="10" />
+                        </svg>
+                        {estimateReadingTime(post.body)}
+                      </span>
                     </div>
 
                     {/* Title */}
-                    <h2 className="text-xl font-semibold text-white mb-2 line-clamp-2 group-hover:text-purple-200 transition-colors">
+                    <h2 className="text-xl font-semibold text-white mb-2 line-clamp-2 group-hover:text-transparent group-hover:bg-linear-to-r group-hover:from-purple-200 group-hover:to-pink-200 group-hover:bg-clip-text transition-all duration-300">
                       {post.title}
                     </h2>
 
@@ -126,6 +155,15 @@ export default async function BlogPage({ searchParams }: PageProps) {
                     <p className="text-white/60 text-sm line-clamp-3 mb-4">
                       {post.excerpt}
                     </p>
+
+                    {post.published_at && (
+                      <div className="flex items-center gap-2 mb-3">
+                        <span className="text-white/40 text-xs">{getRelativeTime(post.published_at)}</span>
+                        {isNew && (
+                          <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+                        )}
+                      </div>
+                    )}
 
                     {/* Footer */}
                     <div className="pt-4 border-t border-white/10">
@@ -140,7 +178,7 @@ export default async function BlogPage({ searchParams }: PageProps) {
                   </div>
                 </Link>
               </article>
-            ))}
+            )})}
           </div>
         )}
       </div>
