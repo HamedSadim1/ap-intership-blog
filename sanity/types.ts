@@ -12,6 +12,8 @@
  * ---------------------------------------------------------------------------------
  */
 
+export declare const internalGroqTypeReferenceTo: unique symbol;
+
 // Source: sanity/extract.json
 export type Tag = {
   _id: string;
@@ -280,8 +282,6 @@ export type AllSanitySchemaTypes =
   | SanityAssetSourceData
   | SanityImageAsset
   | Geopoint;
-
-export declare const internalGroqTypeReferenceTo: unique symbol;
 
 // Source: sanity/lib/queries.ts
 // Variable: allPostsQuery
