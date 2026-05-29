@@ -67,8 +67,8 @@ const Navbar = ({
 
           {/* Mobile Navigation */}
           <div
-            className={`md:hidden overflow-hidden transition-all duration-300 ${
-              isOpen ? "max-h-96 mt-4 pt-4 border-t border-white/10" : "max-h-0"
+            className={`md:hidden overflow-hidden transition-[max-height,opacity,margin,padding] duration-300 ease-out ${
+              isOpen ? "max-h-96 mt-4 pt-4 border-t border-white/10" : "max-h-0 opacity-0"
             }`}
           >
             <div className="flex flex-col gap-4">

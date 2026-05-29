@@ -17,6 +17,7 @@
 :root {
   --background: #0a0a0a;
   --foreground: #ededed;
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 /**
@@ -112,7 +113,7 @@ html {
 /* Scale-in voor badges */
 @keyframes scaleIn {
   from {
-    transform: scale(0);
+    transform: scale(0.95);
     opacity: 0;
   }
   to {
@@ -132,27 +133,23 @@ html {
 }
 
 /* Utility classes voor animaties */
-.animate-fade-in-up {
-  animation: fadeInUp 0.5s ease-out both;
-}
-
 .animate-fade-in {
-  animation: fadeIn 0.5s ease-out both;
+  animation: fadeIn 0.3s var(--ease-out) both;
 }
 
 .animate-scale-in {
-  animation: scaleIn 0.3s ease-out both;
+  animation: scaleIn 0.25s var(--ease-out) both;
 }
 
 /* Card die van onder komt met staggered delay */
 .animate-card {
-  animation: fadeInUp 0.5s ease-out both;
+  animation: fadeInUp 0.4s var(--ease-out) both;
 }
 
 /* Gradient text shimmer effect */
 .gradient-text-shimmer {
   background-size: 200% auto;
-  animation: shimmer 3s ease-in-out infinite;
+  animation: shimmer 3s linear infinite;
 }
 
 body {
@@ -226,7 +223,7 @@ body {
   text-decoration: underline;
   text-decoration-thickness: 2px;
   text-underline-offset: 4px;
-  transition: color 0.2s ease;
+  transition: color 0.2s var(--ease-out);
 }
 
 .prose a:hover {
@@ -364,7 +361,7 @@ body {
   text-decoration: none;
   margin-right: 0.5rem;
   opacity: 0;
-  transition: opacity 0.2s;
+  transition: opacity 0.15s var(--ease-out);
 }
 
 .prose h1:hover .heading-anchor,
@@ -376,6 +373,22 @@ body {
 
 .heading-anchor:hover {
   color: rgba(255, 255, 255, 0.6);
+}
+
+/* prefers-reduced-motion: behoud kleur/opacity, verwijder beweging */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .animate-card {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
 }
 
 /* Verbeterde spacing */
@@ -461,7 +474,7 @@ body {
   border-radius: 0.375rem;
   font-size: 0.75rem;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: background-color 0.2s var(--ease-out), color 0.2s var(--ease-out), border-color 0.2s var(--ease-out);
   backdrop-filter: blur(8px);
   font-family:
     system-ui,
@@ -473,6 +486,10 @@ body {
   background: rgba(255, 255, 255, 0.2);
   color: white;
   border-color: rgba(255, 255, 255, 0.3);
+}
+
+.copy-button:active {
+  transform: scale(0.97);
 }
 
 .copy-button.copied {

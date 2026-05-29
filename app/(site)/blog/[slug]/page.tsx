@@ -148,7 +148,7 @@ export default async function BlogPostPage({ params }: PageProps) {
         {/* Back link */}
         <Link
           href="/blog"
-          className="inline-flex items-center gap-2 mb-6 text-sm text-white/60 hover:text-white transition-all duration-300 hover:gap-3 cursor-pointer group"
+          className="inline-flex items-center gap-2 mb-6 text-sm text-white/60 hover:text-white transition-[color,gap] duration-200 hover:gap-3 cursor-pointer group"
         >
           <span className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-white/20 transition-colors">
             <ArrowLeftIcon className="h-4 w-4" />

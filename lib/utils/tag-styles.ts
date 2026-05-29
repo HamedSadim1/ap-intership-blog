@@ -21,7 +21,7 @@ export const TAG_STYLES = {
   base: cn(
     ROUNDED_CLASSES.full,
     "text-white",
-    TRANSITION_CLASSES.all,
+    TRANSITION_CLASSES.colors,
     "cursor-pointer",
   ),
   inactive: "bg-white/20 hover:bg-white/30",

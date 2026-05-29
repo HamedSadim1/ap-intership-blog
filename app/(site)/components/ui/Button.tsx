@@ -63,7 +63,7 @@ const Button = ({
 }: ButtonProps) => {
   // Basis styling die voor alle varianten geldt
   const baseStyles =
-    "group inline-flex items-center justify-center gap-2 px-8 py-4 font-semibold rounded-2xl transition-all duration-300 hover:scale-105 cursor-pointer";
+    "group inline-flex items-center justify-center gap-2 px-8 py-4 font-semibold rounded-2xl transition-[transform,background-color] duration-200 ease-[var(--ease-out)] hover:scale-105 active:scale-[0.97] cursor-pointer";
 
   const combinedStyles = `${baseStyles} ${variantStyles[variant]} ${className}`;
 

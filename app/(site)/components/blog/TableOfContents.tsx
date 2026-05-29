@@ -170,7 +170,7 @@ export function TableOfContents({ headings, readingTime }: TableOfContentsProps)
                 href={`#${id}`}
                 onClick={(e) => handleClick(e, id)}
                 className={`
-                  group flex items-center gap-2 text-sm transition-all duration-200
+                  group flex items-center gap-2 text-sm transition-[transform,color] duration-200
                   hover:translate-x-1 cursor-pointer
                   ${
                     // Als dit de actieve heading is: cyan kleur + bold
@@ -184,7 +184,7 @@ export function TableOfContents({ headings, readingTime }: TableOfContentsProps)
                 {/* Kleine ronde bullet die groter wordt bij actieve heading */}
                 <span
                   className={`
-                  w-1.5 h-1.5 rounded-full transition-all duration-200
+                  w-1.5 h-1.5 rounded-full transition-[transform,background-color] duration-200
                   ${
                     activeId === id
                       ? "bg-cyan-300 scale-125" // Actief: cyan + 25% groter

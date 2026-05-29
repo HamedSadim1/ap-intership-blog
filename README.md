@@ -4,10 +4,10 @@
 
 ### _Mijn reis door het werkplekleren_
 
-[![Next.js](https://img.shields.io/badge/Next.js-16.1-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-16.2-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
 [![Sanity](https://img.shields.io/badge/Sanity-CMS-F03E2F?style=for-the-badge&logo=sanity)](https://www.sanity.io/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.1-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-6.0-3178C6?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.3-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
 
 <br/>
 
@@ -58,7 +58,6 @@ Als student Graduaat Programmeren aan AP Hogeschool gebruik ik deze blog om:
 ### 🔧 Backend
 
 - 📝 **Sanity CMS** voor content management
-- 🔐 **Better Auth** authenticatie
 - 📖 **Geavanceerde Markdown** met callouts, TOC, en meer
 - 🏷️ Tag-gebaseerde filtering
 - ⚡ Live content updates
@@ -106,7 +105,7 @@ Elke blog post bevat:
 
 ### Vereisten
 
-- [Node.js](https://nodejs.org/) 18+ of [Bun](https://bun.sh/)
+- [Bun](https://bun.sh/) 1.2+ (aanbevolen) of [Node.js](https://nodejs.org/) 18+
 - [Git](https://git-scm.com/)
 - Sanity account (gratis tier beschikbaar)
 
@@ -114,12 +113,10 @@ Elke blog post bevat:
 
 ```bash
 # 1️⃣ Clone de repository
-git clone https://github.com/[username]/ap-internship-blog.git
-cd ap-internship-blog
+git clone https://github.com/HamedSadim1/ap-intership-blog.git
+cd ap-intership-blog
 
 # 2️⃣ Installeer dependencies
-npm install
-# of met bun
 bun install
 
 # 3️⃣ Configureer environment variables
@@ -127,10 +124,19 @@ cp .env.example .env.local
 # Vul de benodigde API keys in
 
 # 4️⃣ Start de development server
-npm run dev
-# of met bun
-bun dev
+bun run dev
 ```
+
+### 📦 Husky Hooks
+
+Dit project gebruikt **Husky** voor geautomatiseerde Git hooks die code kwaliteit waarborgen:
+
+| Hook        | Actie                               |
+| ----------- | ----------------------------------- |
+| **pre-commit** | `bun run lint` + `bunx tsc --noEmit` |
+| **pre-push**   | `bun run build`                     |
+
+Hooks worden automatisch geactiveerd na `bun install`.
 
 ### 🔑 Environment Variables
 
@@ -168,13 +174,14 @@ ap-internship-blog/
 
 ### 🎯 Scripts
 
-| Command           | Beschrijving             |
-| ----------------- | ------------------------ |
-| `npm run dev`     | Start development server |
-| `npm run build`   | Bouw productie versie    |
-| `npm run start`   | Start productie server   |
-| `npm run lint`    | Voer ESLint uit          |
-| `npm run typegen` | Genereer Sanity types    |
+| Command                | Beschrijving                 |
+| ---------------------- | ---------------------------- |
+| `bun run dev`          | Start development server     |
+| `bun run build`        | Bouw productie versie        |
+| `bun run start`        | Start productie server       |
+| `bun run lint`         | Voer ESLint uit              |
+| `bun run typegen`      | Genereer/ververs Sanity types |
+| `bunx tsc --noEmit`    | TypeScript typecheck         |
 
 ### 📚 Documentatie Bestanden
 
@@ -186,7 +193,8 @@ ap-internship-blog/
 
 ## 🚀 Live Demo
 
-> 🔗 **Live op:** [https://ap-intership-blog-adomate.vercel.app/](https://ap-intership-blog-adomate.vercel.app/)
+> 🔗 **Ontwikkeling:** [http://localhost:3000](http://localhost:3000)
+> 🔗 **Productie:** [https://stageblog.vercel.app/](https://stageblog.vercel.app/)
 
 ---
 
@@ -261,22 +269,31 @@ Tijdens mijn stage focus ik op de volgende ontwikkelgebieden:
 ### 📦 Belangrijkste Dependencies
 
 **Frontend:**
-- `next` (16.1+) - React framework met App Router
-- `react` (19+) - UI library met Server Components
-- `tailwindcss` (4.1+) - Utility-first CSS framework
-- `better-auth` - Moderne authenticatie oplossing
+- `next` (16.2.6) - React framework met App Router
+- `react` (19.2.6) - UI library met Server Components
+- `typescript` (6.0.3) - Type-safe JavaScript
 
 **Content & Markdown:**
 - `@sanity/client` - Sanity CMS integratie
 - `next-sanity` - Next.js + Sanity optimalisatie
-- `markdown-it` - Markdown parser
+- `sanity` (5.28+) - Sanity Studio + CMS
+- `markdown-it` (14.2+) - Markdown parser
 - `markdown-it-anchor` - Automatische heading anchors
 - `markdown-it-container` - Custom callout containers
+- `markdown-it-attrs` - HTML attributen in Markdown
+- `markdown-it-emoji` - Emoji ondersteuning
 - `highlight.js` - Syntax highlighting voor code blocks
 
+**Styling:**
+- `tailwindcss` (4.3+) - Utility-first CSS
+- `@tailwindcss/typography` - Prose classes voor Markdown
+- `@tailwindcss/postcss` - Tailwind PostCSS plugin
+
 **Utilities:**
-- `clsx` - Conditional className helper
-- `date-fns` - Datum formatting
+- `@sanity/image-url` - Sanity image URLs genereren
+- `@sanity/icons` - Sanity icon set
+- `sanity-plugin-markdown` - Markdown editor in Sanity Studio
+- `server-only` - Server-side only code markering
 
 ---
 
