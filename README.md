@@ -339,7 +339,7 @@ Naast deze README zijn er gespecialiseerde documentatiebestanden:
 
 ## 🚀 Live Demo
 
-> 🌐 **Productie:** [https://stageblog.vercel.app/](https://stageblog.vercel.app/)
+> 🌐 **Productie:** [https://ap-intership-blog-adomate.vercel.app/](https://ap-intership-blog-adomate.vercel.app/)
 >
 > 💻 **Lokaal:** [http://localhost:3000](http://localhost:3000)
 >
