@@ -84,7 +84,7 @@ const Navbar = ({
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
         <SheetContent
           side="right"
-          className="w-[280px] max-w-[85vw] border-l border-white/20 bg-white/10 backdrop-blur-2xl text-white p-6 pt-16"
+          className="w-70 max-w-[85vw] border-l border-white/20 bg-white/10 backdrop-blur-2xl text-white p-6 pt-16"
         >
           <nav className="flex flex-col gap-3 mt-4">
             {items.map((item) => (

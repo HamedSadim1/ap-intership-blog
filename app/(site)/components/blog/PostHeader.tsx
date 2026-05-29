@@ -24,15 +24,15 @@ export function PostHeader({ post }: PostHeaderProps) {
             fill
             priority
             sizes="(max-width: 768px) 100vw, 800px"
-            className="object-contain transition-transform duration-700 ease-[var(--ease-out)] group-hover/image:scale-105"
+            className="object-contain transition-transform duration-700 ease-out group-hover/image:scale-105"
           />
           {/* Multi-layer gradient overlay for depth */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-pink-500/10" />
+          <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/20 to-transparent" />
+          <div className="absolute inset-0 bg-linear-to-r from-purple-500/10 to-pink-500/10" />
 
           {/* Featured badge */}
           {post.is_featured && (
-            <span className="absolute top-4 left-4 bg-gradient-to-r from-yellow-400 to-amber-500 text-black text-xs font-bold px-3 py-1.5 rounded-full shadow-lg">
+            <span className="absolute top-4 left-4 bg-linear-to-r from-yellow-400 to-amber-500 text-black text-xs font-bold px-3 py-1.5 rounded-full shadow-lg">
               ★ Uitgelicht
             </span>
           )}
@@ -41,7 +41,7 @@ export function PostHeader({ post }: PostHeaderProps) {
 
       {/* Title with subtle gradient text effect */}
       <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 leading-tight tracking-tight">
-        <span className="bg-gradient-to-r from-white via-purple-100 to-pink-100 bg-clip-text text-transparent">
+        <span className="bg-linear-to-r from-white via-purple-100 to-pink-100 bg-clip-text text-transparent">
           {post.title}
         </span>
       </h1>
