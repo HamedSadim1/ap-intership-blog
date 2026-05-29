@@ -5,6 +5,7 @@ import { urlFor } from "@/sanity/lib/image";
 import TagFilter from "@/app/components/TagFilter";
 import Link from "next/link";
 import { AuthorInfo, TagList } from "@/app/(site)/components/blog";
+import { ClockIcon } from "@/app/(site)/components/svgs";
 import type { PageProps } from "@/types";
 import { DEFAULT_METADATA } from "@/lib/constants";
 import { getRelativeTime } from "@/lib/utils/date";
@@ -137,10 +138,7 @@ export default async function BlogPage({ searchParams }: PageProps) {
                         clickable={false}
                       />
                       <span className="text-white/40 text-xs whitespace-nowrap flex items-center gap-1">
-                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6l4 2" />
-                          <circle cx="12" cy="12" r="10" />
-                        </svg>
+                        <ClockIcon className="w-3.5 h-3.5" />
                         {estimateReadingTime(post.body)}
                       </span>
                     </div>

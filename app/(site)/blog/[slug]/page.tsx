@@ -7,7 +7,7 @@ import {
   TableOfContents,
   TagList,
 } from "@/app/(site)/components/blog";
-import { ArrowLeftIcon } from "@/app/(site)/components/svgs";
+import { ArrowLeftIcon, CalendarIcon, ChevronDownIcon, ClockIcon } from "@/app/(site)/components/svgs";
 import Section from "@/app/(site)/components/ui/Section";
 import { DEFAULT_METADATA } from "@/lib/constants";
 import { getPostBySlug } from "@/lib/sanity";
@@ -102,9 +102,7 @@ function MobileTocToggle({ headings }: { headings: { level: number; text: string
       <summary className="backdrop-blur-md bg-white/10 rounded-xl p-4 border border-white/20 cursor-pointer text-white font-medium flex items-center gap-2 hover:bg-white/15 transition-colors list-none">
         <span>📑</span>
         <span>Inhoudsopgave</span>
-        <svg className="w-4 h-4 ml-auto transition-transform group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-        </svg>
+        <ChevronDownIcon className="w-4 h-4 ml-auto transition-transform group-open:rotate-180" />
       </summary>
       <nav className="mt-2 backdrop-blur-md bg-white/5 rounded-xl p-4 border border-white/10">
         <ul className="space-y-2">
@@ -176,17 +174,12 @@ export default async function BlogPostPage({ params }: PageProps) {
               )}
               <span className="text-white/30 hidden sm:inline">|</span>
               <span className="text-white/50 text-sm flex items-center gap-1.5">
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6l4 2" />
-                  <circle cx="12" cy="12" r="10" />
-                </svg>
+                <ClockIcon className="w-4 h-4" />
                 {readingTime}
               </span>
               {post.published_at && (
                 <span className="text-white/50 text-sm flex items-center gap-1.5">
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
+                  <CalendarIcon className="w-4 h-4" />
                   {formatDate(post.published_at)}
                 </span>
               )}
