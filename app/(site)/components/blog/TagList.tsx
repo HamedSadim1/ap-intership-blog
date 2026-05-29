@@ -28,9 +28,14 @@ export function TagList({
 }: TagListProps) {
   if (!tags || tags.length === 0) return null;
 
+  // Dedupliceer tags op _id om duplicate key errors te voorkomen
+  const uniqueTags = tags.filter(
+    (tag, index, self) => index === self.findIndex((t) => t._id === tag._id)
+  );
+
   return (
     <div className="flex flex-wrap gap-2">
-      {tags.map((tag) => {
+      {uniqueTags.map((tag) => {
         if (!clickable) {
           return (
             <span
